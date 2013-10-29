@@ -1,5 +1,9 @@
 package com.etk.db;
 
+import com.etk.db.query.QueryResult;
+
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: mladen
@@ -9,4 +13,5 @@ package com.etk.db;
  */
 public interface DBMSExecutor {
     public List<QueryResult> executeQuery(String sqlQuery);
+
 }

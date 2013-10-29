@@ -1,4 +1,4 @@
-package com.etk.db;
+package com.etk.db.query;
 
 import java.util.List;
 
@@ -12,6 +12,5 @@ import java.util.List;
 public interface QueryResult {
     public List<String> getAttributes();
     public List<Class>   getAttributeTypes();
-
-    public Object getValue(String attribute);
+    public int getSize();
 }
