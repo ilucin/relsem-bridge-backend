@@ -24,7 +24,7 @@ public class sample_server {
         t.start();
       }
     } catch (IOException ioe) {
-      System.out.println("IOException on socket listen: " + ioe);
+      System.out.println("IOException on socket listen:  " + ioe);
       ioe.printStackTrace();
     }
   }
