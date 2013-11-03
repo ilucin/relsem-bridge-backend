@@ -21,3 +21,4 @@ bin/**
 .loadpath
 .DS_Store
 local.properties
+/bin
