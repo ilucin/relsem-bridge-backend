@@ -45,6 +45,7 @@ class SessionHandler implements Runnable {
 	private void sendAuthenticationOkMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('R');
+		dataOutputStream.writeByte(new Character('R'));
 		dataOutputStream.writeInt(8);
 		dataOutputStream.writeInt(0);
 	}
@@ -54,6 +55,12 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeByte('Z');
 		dataOutputStream.writeInt(5);
 		dataOutputStream.writeByte('I');
+	}
+	
+	private void sendTerminateMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('X');
+		dataOutputStream.writeInt(4);
 	}
 
 	public void run() {
