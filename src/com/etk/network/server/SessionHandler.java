@@ -1,154 +1,150 @@
 package com.etk.network.server;
-import java.io.*;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
 class SessionHandler implements Runnable {
-    private Socket server;
-    private String line,input;
+	private Socket server_;
+	private String line_, input_;
 
-    SessionHandler(Socket server) {
-      this.server=server;
-    }
+	SessionHandler(Socket server) {
+		this.server_ = server;
+	}
 
-    public byte[] terminate(String inStr) {
-        byte[] in = inStr.getBytes();
-        byte[] out = new byte[in.length+1];
-        for(int i = 0; i<in.length; i++) {
-            out[i] = in[i];
-        }
-        out[in.length]=0;
-        return out;
-    }
+	private byte[] nullTerminateString(String string) {
+		byte[] in = string.getBytes();
+		byte[] out = new byte[in.length + 1];
+		for (int i = 0; i < in.length; i++) {
+			out[i] = in[i];
+		}
+		out[in.length] = 0;
+		return out;
+	}
 
-    public void run () {
+	private void sendServerVersionMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		String param = "server_version";
+		String paramV = "9";
+		int lenP = param.getBytes().length + paramV.getBytes().length;
+		
+		dataOutputStream.writeByte('S');
+		byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO BE
+		// NULTERMINATED EVEN THOUGH DOCS
+		// DONT MENTION IT
+		byte[] valB = nullTerminateString(paramV);
+		dataOutputStream.writeInt(4 + nameB.length + valB.length);
+		dataOutputStream.write(nameB);
+		dataOutputStream.write(valB);
+	}
 
-      input="";
+	private void sendAuthenticationOkMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte(new Character('R'));
+		dataOutputStream.writeInt(8);
+		dataOutputStream.writeInt(0);
+	}
 
-      try {
-          DataInputStream is =  new DataInputStream(server.getInputStream());
-          DataOutputStream os =  new DataOutputStream(server.getOutputStream());
+	private void sendReadyForQueryMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('Z');
+		dataOutputStream.writeInt(5);
+		dataOutputStream.writeByte('I');
+	}
 
-          MsgParser parser = new MsgParser();
+	public void run() {
 
-          int msgLen = is.readInt();
-          short protocolMajorVersion = is.readShort();
-          short protocolMinorVersion = is.readShort();
+		input_ = "";
 
-          byte[] authParamsB = new byte[msgLen-8]; //msglen - version and len
-          is.read(authParamsB);
-          String authParams = parser.parseMsg(authParamsB);
+		try {
+			DataInputStream dataInputStream = new DataInputStream(server_.getInputStream());
+			DataOutputStream dataOutputStream = new DataOutputStream(
+					server_.getOutputStream());
 
-          System.out.println("Client connected!");
-          System.out.println("Msg len: "+msgLen);
-          System.out.println("Protocol: V"+protocolMajorVersion+"."+protocolMinorVersion);
+			MsgParser msgParser = new MsgParser();
 
-          System.out.println("Auth params: "+authParams);
+			int msgLen = dataInputStream.readInt();
+			short protocolMajorVersion = dataInputStream.readShort();
+			short protocolMinorVersion = dataInputStream.readShort();
 
+			byte[] authParamsB = new byte[msgLen - 8]; // msglen - version and
+														// len
+			dataInputStream.read(authParamsB);
+			String authParams = msgParser.parseMsg(authParamsB);
 
-          //REPLY AUTHOK  //1 byte 2 ints  NOT WORKING, TRY SOMETHING ELSE
+			System.out.println("Client connected!");
+			System.out.println("Msg len: " + msgLen);
+			System.out.println("Protocol: V" + protocolMajorVersion + "."
+					+ protocolMinorVersion);
 
-          //AUTHOK
-         os.writeByte('R');
-         os.writeInt(8);
-         os.writeInt(0);
+			System.out.println("Auth params: " + authParams);
 
+			sendAuthenticationOkMessage(dataOutputStream);
 
-/*
-          os.writeByte('K');
-          os.writeInt(12);
-          os.writeInt(2);
-          os.writeInt(3);*/
+			/*
+			 * os.writeByte('K'); os.writeInt(12); os.writeInt(2);
+			 * os.writeInt(3);
+			 */
 
+			this.sendServerVersionMessage(dataOutputStream);
 
-         //PARAMETERSTATUS
-          String param ="server_version";
-          String paramV = "9";
-          int lenP = param.getBytes().length+paramV.getBytes().length;
-          System.out.println(lenP + " len");
-          os.writeByte('S');
-          byte[] nameB = terminate(param);  //PEACE OF SHIT NEEDS TO BE NULTERMINATED EVEN THOUGH DOCS DONT MENTION IT
-          byte[] valB = terminate(paramV);
-          os.writeInt(4+nameB.length+valB.length);
-          os.write(nameB);
-          os.write(valB);
+			this.sendReadyForQueryMessage(dataOutputStream);
 
-         /* param ="server_version";
-          paramV = "9";
-          lenP = param.getBytes().length+paramV.getBytes().length;
-          System.out.println(lenP+" len");
-          os.writeByte('S');
-          os.writeInt(lenP+4);
-          os.writeChars(param);
-          os.writeChars(paramV);*/
+			dataOutputStream.flush();
 
-        //READYFORQUERY
-         os.writeByte('Z');
-         os.writeInt(5);
-         os.writeByte('I');
+			/*
+			 * 
+			 * String m = "NEKA GRESKA"; os.writeByte('E');
+			 * os.writeInt(m.getBytes().length*2+4+1); os.writeByte('M');
+			 * os.writeChars(m); os.flush();
+			 */
 
-          os.flush();
+			while (true) {
+				byte type = dataInputStream.readByte();
+				int msgLength = dataInputStream.readInt();
 
-/*
+				byte[] msgB = new byte[dataInputStream.available()]; // check if this matches
+														// msgLength - 4
+				dataInputStream.read(msgB);
 
-          String m = "NEKA GRESKA";
-          os.writeByte('E');
-          os.writeInt(m.getBytes().length*2+4+1);
-          os.writeByte('M');
-          os.writeChars(m);
-          os.flush();
-*/
+				// String msgString = parser.parseMsg(msgB); //if u want string
+				// representation
 
+				// reply to the client msg, delete exit
 
+			}
 
-          while(true) {
-              byte type = is.readByte();
-              int msgLength = is.readInt();
+		} catch (IOException ioe) {
+			System.out.println("IOException on socket listen: " + ioe);
+			ioe.printStackTrace();
+		}
+	}
 
-              byte[] msgB = new byte[is.available()]; //check if this matches msgLength - 4
-              is.read(msgB);
+	private class MsgParser {
 
-              //String msgString = parser.parseMsg(msgB); //if u want string representation
+		public short parseShort(byte[] bytes) {
+			byte[] typeBytes = new byte[2];
+			typeBytes[0] = 0;
+			typeBytes[1] = bytes[0];
+			return ByteBuffer.wrap(typeBytes).getShort();
 
+		}
 
-              //reply to the client msg, delete exit
+		public int parseInt(byte[] bytes) {
+			byte[] lenBytes = Arrays.copyOf(bytes, 4);
+			int len = ByteBuffer.wrap(lenBytes).getInt();
+			return len;
+		}
 
+		public String parseMsg(byte[] bytes) {
+			String msgString = new String(bytes, Charset.forName("UTF-8"));
+			return msgString;
+		}
 
-          }
-
-
-
-
-      } catch (IOException ioe) {
-        System.out.println("IOException on socket listen: " + ioe);
-        ioe.printStackTrace();
-      }
-    }
-
-    private class MsgParser {
-
-        public short parseShort(byte[] msg) {
-            byte[] typeBytes = new byte[2];
-            typeBytes[0] = 0;
-            typeBytes[1] = msg[0];
-            return ByteBuffer.wrap(typeBytes).getShort();
-
-        }
-
-        public int parseInt(byte[] msg){
-            byte[] lenBytes = Arrays.copyOf(msg,4);
-            int len = ByteBuffer.wrap(lenBytes).getInt();
-            return len;
-        }
-
-        public String parseMsg(byte[] msg){
-            String msgString = new String(msg,Charset.forName("UTF-8"));
-            return msgString;
-        }
-
-
-    }
+	}
 
 }
