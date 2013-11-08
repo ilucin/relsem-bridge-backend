@@ -13,6 +13,16 @@ class SessionHandler implements Runnable {
       this.server=server;
     }
 
+    public byte[] terminate(String inStr) {
+        byte[] in = inStr.getBytes();
+        byte[] out = new byte[in.length+1];
+        for(int i = 0; i<in.length; i++) {
+            out[i] = in[i];
+        }
+        out[in.length]=0;
+        return out;
+    }
+
     public void run () {
 
       input="";
@@ -57,11 +67,22 @@ class SessionHandler implements Runnable {
           String param ="server_version";
           String paramV = "9";
           int lenP = param.getBytes().length+paramV.getBytes().length;
+          System.out.println(lenP + " len");
+          os.writeByte('S');
+          byte[] nameB = terminate(param);  //PEACE OF SHIT NEEDS TO BE NULTERMINATED EVEN THOUGH DOCS DONT MENTION IT
+          byte[] valB = terminate(paramV);
+          os.writeInt(4+nameB.length+valB.length);
+          os.write(nameB);
+          os.write(valB);
+
+         /* param ="server_version";
+          paramV = "9";
+          lenP = param.getBytes().length+paramV.getBytes().length;
           System.out.println(lenP+" len");
           os.writeByte('S');
-          os.writeInt(19);
+          os.writeInt(lenP+4);
           os.writeChars(param);
-          os.writeChars(paramV);
+          os.writeChars(paramV);*/
 
         //READYFORQUERY
          os.writeByte('Z');
