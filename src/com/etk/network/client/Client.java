@@ -16,8 +16,8 @@ public class Client {
 
 		// connect to the database
 		conn = connectToDatabaseOrDie();
-
-		// get data
+        System.out.println("Connected!");
+        // get data
 		query(conn, list);
 
 		// print results
@@ -59,7 +59,7 @@ public class Client {
             String database = "Test";
             String username = "postgres";
             String password = "postgres";
-            String url = "jdbc:postgresql:5000//" + host + "/" + database;
+            String url = "jdbc:postgresql://localhost:5000/dbname?protocolVersion=3";
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
 			System.err.println("I have not found the PostgreSQL driver class");
