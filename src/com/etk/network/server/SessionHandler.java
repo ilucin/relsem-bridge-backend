@@ -19,7 +19,7 @@ class SessionHandler implements Runnable {
 
       try {
           DataInputStream is =  new DataInputStream(server.getInputStream());
-          OutputStream os = server.getOutputStream();
+          DataOutputStream os =  new DataOutputStream(server.getOutputStream());
 
           MsgParser parser = new MsgParser();
 
@@ -39,12 +39,47 @@ class SessionHandler implements Runnable {
 
 
           //REPLY AUTHOK  //1 byte 2 ints  NOT WORKING, TRY SOMETHING ELSE
-          /*byte[] authOkReply = new byte[1+4*2];
-          authOkReply[0] = 'R';
-          authOkReply[1] = 8;
 
-          os.write(authOkReply);
-          os.flush();*/
+          //AUTHOK
+         os.writeByte('R');
+         os.writeInt(8);
+         os.writeInt(0);
+
+
+/*
+          os.writeByte('K');
+          os.writeInt(12);
+          os.writeInt(2);
+          os.writeInt(3);*/
+
+
+         //PARAMETERSTATUS
+          String param ="server_version";
+          String paramV = "9";
+          int lenP = param.getBytes().length+paramV.getBytes().length;
+          System.out.println(lenP+" len");
+          os.writeByte('S');
+          os.writeInt(19);
+          os.writeChars(param);
+          os.writeChars(paramV);
+
+        //READYFORQUERY
+         os.writeByte('Z');
+         os.writeInt(5);
+         os.writeByte('I');
+
+          os.flush();
+
+/*
+
+          String m = "NEKA GRESKA";
+          os.writeByte('E');
+          os.writeInt(m.getBytes().length*2+4+1);
+          os.writeByte('M');
+          os.writeChars(m);
+          os.flush();
+*/
+
 
 
           while(true) {
@@ -58,7 +93,7 @@ class SessionHandler implements Runnable {
 
 
               //reply to the client msg, delete exit
-              System.exit(0);
+
 
           }
 
