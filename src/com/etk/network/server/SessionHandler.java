@@ -31,7 +31,7 @@ class SessionHandler implements Runnable {
 		String param = "server_version";
 		String paramV = "9";
 		int lenP = param.getBytes().length + paramV.getBytes().length;
-		
+
 		dataOutputStream.writeByte('S');
 		byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO BE
 		// NULTERMINATED EVEN THOUGH DOCS
@@ -55,10 +55,16 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeInt(5);
 		dataOutputStream.writeByte('I');
 	}
-	
+
 	private void sendTerminateMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('X');
+		dataOutputStream.writeInt(4);
+	}
+
+	private void sendParseCompleteMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte(1);
 		dataOutputStream.writeInt(4);
 	}
 
@@ -67,7 +73,8 @@ class SessionHandler implements Runnable {
 		input_ = "";
 
 		try {
-			DataInputStream dataInputStream = new DataInputStream(server_.getInputStream());
+			DataInputStream dataInputStream = new DataInputStream(
+					server_.getInputStream());
 			DataOutputStream dataOutputStream = new DataOutputStream(
 					server_.getOutputStream());
 
@@ -109,17 +116,19 @@ class SessionHandler implements Runnable {
 			 * os.writeChars(m); os.flush();
 			 */
 
+			/*
+			 * First message received here is P message: Parse
+			 */
 			while (true) {
 				byte type = dataInputStream.readByte();
 				int msgLength = dataInputStream.readInt();
-
-				byte[] msgB = new byte[dataInputStream.available()]; // check if this matches
-														// msgLength - 4
-				dataInputStream.read(msgB);
-
-				// String msgString = parser.parseMsg(msgB); //if u want string
-				// representation
-
+				System.out.println("Message Type: " + (char) type);
+				System.out.println("Lenght: " + msgLength);
+				
+				byte[] buf = new byte[dataInputStream.available() - 4];
+				dataInputStream.read(buf);
+				String inputString = msgParser.parseMsg(buf);
+				System.out.println(inputString);
 				// reply to the client msg, delete exit
 
 			}
