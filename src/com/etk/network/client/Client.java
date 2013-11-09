@@ -1,6 +1,10 @@
 package com.etk.network.client;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -17,9 +21,11 @@ public class Client {
 		// connect to the database
 		conn = connectToDatabaseOrDie();
         System.out.println("Connected!");
+        
         // get data
 		query(conn, list);
-
+		
+		System.out.println("QuerySent!");
 		// print results
 		printAll(list);
 	}

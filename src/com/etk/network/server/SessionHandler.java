@@ -31,12 +31,12 @@ class SessionHandler implements Runnable {
 		String param = "server_version";
 		String paramV = "9";
 		int lenP = param.getBytes().length + paramV.getBytes().length;
-
-		dataOutputStream.writeByte('S');
 		byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO BE
 		// NULTERMINATED EVEN THOUGH DOCS
 		// DONT MENTION IT
 		byte[] valB = nullTerminateString(paramV);
+
+		dataOutputStream.writeByte('S');
 		dataOutputStream.writeInt(4 + nameB.length + valB.length);
 		dataOutputStream.write(nameB);
 		dataOutputStream.write(valB);
@@ -62,10 +62,31 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeInt(4);
 	}
 
+	private void sendCommandCompleteMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('C');
+		String tmp = "SELECT 0";
+		dataOutputStream.writeInt(4 + tmp.getBytes().length);
+		dataOutputStream.write(tmp.getBytes());
+	}
+
 	private void sendParseCompleteMessage(DataOutputStream dataOutputStream)
 			throws IOException {
-		dataOutputStream.writeByte(1);
+		dataOutputStream.writeByte('1');
 		dataOutputStream.writeInt(4);
+	}
+
+	private void sendEmptyQueryResponseMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('I');
+		dataOutputStream.writeInt(4);
+	}
+
+	private void sendRowDescriptionMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('T');
+		dataOutputStream.writeInt(6);
+		dataOutputStream.writeShort(0);
 	}
 
 	public void run() {
@@ -110,26 +131,35 @@ class SessionHandler implements Runnable {
 			dataOutputStream.flush();
 
 			/*
-			 * 
-			 * String m = "NEKA GRESKA"; os.writeByte('E');
-			 * os.writeInt(m.getBytes().length*2+4+1); os.writeByte('M');
-			 * os.writeChars(m); os.flush();
-			 */
-
-			/*
-			 * First message received here is P message: Parse
+			 * I think now the client wants the result of the query
 			 */
 			while (true) {
-				byte type = dataInputStream.readByte();
-				int msgLength = dataInputStream.readInt();
-				System.out.println("Message Type: " + (char) type);
-				System.out.println("Lenght: " + msgLength);
-				
-				byte[] buf = new byte[dataInputStream.available() - 4];
-				dataInputStream.read(buf);
-				String inputString = msgParser.parseMsg(buf);
-				System.out.println(inputString);
-				// reply to the client msg, delete exit
+
+				if (dataInputStream.available() > 0) {
+					byte type = dataInputStream.readByte();
+					int msgLength = dataInputStream.readInt();
+					System.out.println("Message Type: " + (char) type);
+					System.out.println("Lenght: " + msgLength);
+
+					byte[] buf = new byte[dataInputStream.available() - 4];
+					dataInputStream.read(buf);
+					String inputString = msgParser.parseMsg(buf);
+					System.out.println(inputString);
+
+					/*
+					 * this is in case the server receive an empty query string
+					 * and seems to work
+					 * sendEmptyQueryResponseMessage(dataOutputStream);
+					 * sendReadyForQueryMessage(dataOutputStream);
+					 * dataOutputStream.flush();
+					 */
+
+					sendRowDescriptionMessage(dataOutputStream);
+					dataOutputStream.flush();
+					sendCommandCompleteMessage(dataOutputStream);
+					dataOutputStream.flush();
+					// reply to the client msg, delete exit
+				}
 
 			}
 
