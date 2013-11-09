@@ -7,5 +7,5 @@ import com.etk.manager.schema.mappings.EntityMapping;
  */
 public class Attribute {
     private String name;
-    private
+    private Type type;
 }
