@@ -187,7 +187,8 @@ class SessionHandler implements Runnable {
 					sendDataRowMessage(dataOutputStream);
 					sendCommandCompleteMessage(dataOutputStream);
 					sendReadyForQueryMessage(dataOutputStream);
-					
+					dataOutputStream.flush();
+
 					// reply to the client msg, delete exit
 				}
 
