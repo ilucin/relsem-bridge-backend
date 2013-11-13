@@ -65,7 +65,7 @@ class SessionHandler implements Runnable {
 	private void sendCommandCompleteMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('C');
-		String tmp = "SELECT 0";
+		String tmp = "SELECT 1";
 		dataOutputStream.writeInt(4 + tmp.getBytes().length);
 		dataOutputStream.write(tmp.getBytes());
 	}
@@ -76,18 +76,45 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeInt(4);
 	}
 
+	private void sendBindCompleteMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('2');
+		dataOutputStream.writeInt(4);
+	}
+	
 	private void sendEmptyQueryResponseMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('I');
 		dataOutputStream.writeInt(4);
 	}
 
+	
 	private void sendRowDescriptionMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('T');
-		dataOutputStream.writeInt(6);
+		dataOutputStream.writeInt(27);
+		dataOutputStream.writeShort(1);
+		dataOutputStream.writeBytes("id");
+		dataOutputStream.writeInt(32780);
+		dataOutputStream.writeShort(3);
+		dataOutputStream.writeInt(20);
+		dataOutputStream.writeShort(8);
+		dataOutputStream.writeInt(-1);
 		dataOutputStream.writeShort(0);
+		
 	}
+	
+	/*Data row incorrect, needs to be finished */
+	
+	private void sendDataRowMessage(DataOutputStream dataOutputStream)
+			throws IOException {
+		dataOutputStream.writeByte('D');
+		dataOutputStream.writeInt(11);
+		dataOutputStream.writeShort(1);
+		dataOutputStream.writeInt(1);
+		dataOutputStream.writeByte('1');
+	}
+	
 
 	public void run() {
 
@@ -154,10 +181,13 @@ class SessionHandler implements Runnable {
 					 * dataOutputStream.flush();
 					 */
 
+					sendParseCompleteMessage(dataOutputStream);
+					sendBindCompleteMessage(dataOutputStream);
 					sendRowDescriptionMessage(dataOutputStream);
-					dataOutputStream.flush();
+					sendDataRowMessage(dataOutputStream);
 					sendCommandCompleteMessage(dataOutputStream);
-					dataOutputStream.flush();
+					sendReadyForQueryMessage(dataOutputStream);
+					
 					// reply to the client msg, delete exit
 				}
 
