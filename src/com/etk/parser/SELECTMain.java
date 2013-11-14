@@ -16,14 +16,15 @@ import java.io.InputStream;
  * To change this template use File | Settings | File Templates.
  */
 public class SELECTMain {
-
-    public static void main(String[] args) throws Exception {
-        String inputFile = null;
-        if ( args.length>0 ) inputFile = args[0];
-        InputStream is = System.in;
-        if ( inputFile!=null ) {
-            is = new FileInputStream(inputFile);
-        }
+	
+	
+    public static void parse(InputStream is) throws Exception {
+//        String inputFile = null;
+//        if ( args.length>0 ) inputFile = args[0];
+//        InputStream is = System.in;
+//        if ( inputFile!=null ) {
+//            is = new FileInputStream(inputFile);
+//        }
         ANTLRInputStream input = new ANTLRInputStream(is);
         SELECTLexer lexer = new SELECTLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -37,4 +38,7 @@ public class SELECTMain {
         System.out.println(converter.getXML(tree));
     */
     }
+
+
+    
 }
