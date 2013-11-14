@@ -81,14 +81,13 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeByte('2');
 		dataOutputStream.writeInt(4);
 	}
-	
+
 	private void sendEmptyQueryResponseMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('I');
 		dataOutputStream.writeInt(4);
 	}
 
-	
 	private void sendRowDescriptionMessage(DataOutputStream dataOutputStream)
 			throws IOException {
 		dataOutputStream.writeByte('T');
@@ -101,20 +100,24 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeShort(8);
 		dataOutputStream.writeInt(-1);
 		dataOutputStream.writeShort(0);
-		
+
 	}
-	
-	/*Data row incorrect, needs to be finished */
-	
-	private void sendDataRowMessage(DataOutputStream dataOutputStream)
-			throws IOException {
-		dataOutputStream.writeByte('D');
-		dataOutputStream.writeInt(11);
-		dataOutputStream.writeShort(1);
-		dataOutputStream.writeInt(1);
-		dataOutputStream.writeByte('1');
+
+	/* Data row incorrect, needs to be finished */
+
+	private void sendDataRowMessage(DataOutputStream dataOutputStream) {
+		try {
+			dataOutputStream.writeByte('D');
+			// Problem with upper line, after that it brokes (tried with other
+			// types of write after it). Why? Problem of size?
+			dataOutputStream.writeInt(11);
+			dataOutputStream.writeShort(1);
+			dataOutputStream.writeInt(1);
+			dataOutputStream.writeByte('1');
+		} catch (IOException ioe) {
+			System.out.println(ioe);
+		}
 	}
-	
 
 	public void run() {
 
@@ -171,7 +174,8 @@ class SessionHandler implements Runnable {
 					byte[] buf = new byte[dataInputStream.available() - 4];
 					dataInputStream.read(buf);
 					String inputString = msgParser.parseMsg(buf);
-					System.out.println(inputString);
+					String inputString2 = inputString;
+					System.out.println(inputString2);
 
 					/*
 					 * this is in case the server receive an empty query string
@@ -185,6 +189,12 @@ class SessionHandler implements Runnable {
 					sendBindCompleteMessage(dataOutputStream);
 					sendRowDescriptionMessage(dataOutputStream);
 					sendDataRowMessage(dataOutputStream);
+					/*
+					 * AFTER DATAROWMESSAGE IT SAYS
+					 * "I/O ERROR WHILE SENDING TO BACKEND", CHECK WHY THIS IS
+					 * HAPPENING. PROBABLY INCORRECT METHOD, CHECK WIRESHARK
+					 */
+
 					sendCommandCompleteMessage(dataOutputStream);
 					sendReadyForQueryMessage(dataOutputStream);
 					dataOutputStream.flush();
