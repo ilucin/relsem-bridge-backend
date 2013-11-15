@@ -42,19 +42,18 @@ public class Client {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
 			ResultSet rs = st
-					.executeQuery("SELECT id, name, surname FROM student.student");
+					.executeQuery("SELECT id FROM student.student");
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				String name = rs.getString("name");
-				String surname = rs.getString("surname");
-				list.add(new Student(id, name, surname));
-			}
+                System.out.println(id);
+            }
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
 			System.err.println("Threw a SQLException.");
-			System.err.println(se.getMessage());
-		}
+            System.err.println(se.getMessage());
+            se.printStackTrace();
+        }
 	}
 
 	private Connection connectToDatabaseOrDie() {

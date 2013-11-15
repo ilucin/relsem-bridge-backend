@@ -154,10 +154,18 @@ class SessionHandler implements Runnable {
 					 * dataOutputStream.flush();
 					 */
 
-					sendRowDescriptionMessage(dataOutputStream);
-					dataOutputStream.flush();
+                    sendData(dataOutputStream);
+                    dataOutputStream.flush();
 					sendCommandCompleteMessage(dataOutputStream);
 					dataOutputStream.flush();
+
+
+
+
+
+					sendReadyForQueryMessage(dataOutputStream);
+                    dataOutputStream.flush();
+
 					// reply to the client msg, delete exit
 				}
 
@@ -169,7 +177,94 @@ class SessionHandler implements Runnable {
 		}
 	}
 
-	private class MsgParser {
+    private void sendData(DataOutputStream dataOutputStream) throws IOException {
+        /*RowDescription (B)
+        Byte1('T')
+                Identifies the message as a row description.
+                Int32   Length of message contents in bytes, including self.
+                Int16   Specifies the number of fields in a row (may be zero).
+                Then, for each field, there is the following:
+        String
+        The field name.
+        Int32
+        If the field can be identified as a column of a specific table, the object ID of the table; otherwise zero.
+        Int16
+        If the field can be identified as a column of a specific table, the attribute number of the column; otherwise zero.
+        Int32
+        The object ID of the field's data type.
+        Int16
+        The data type size (see pg_type.typlen). Note that negative values denote variable-width types.
+        Int32
+        The type modifier (see pg_attribute.atttypmod). The meaning of the modifier is type-specific.
+        Int16
+        The format code being used for the field. Currently will be zero (text) or one (binary). In a RowDescription returned from the statement variant of Describe, the format code is not yet known and will always be zero.
+
+                SSLRequest (F)*/
+        dataOutputStream.writeByte('T');
+
+        short fieldsNo = 1;
+
+        String name = "id";
+        byte[] bName = nullTerminateString(name);
+        int identificator = 0;
+        short identificatorAtr = 0;
+        int typeInd = 0;
+        short typeLen = -2;
+        int typeMod = -1;
+        short formatCode = 0;
+
+        int totalSize = bName.length + 4 +2 +4 +2 + 4 +2+4;
+
+        dataOutputStream.writeInt(totalSize);
+        dataOutputStream.writeShort(fieldsNo);
+        dataOutputStream.writeBytes(new String(bName));
+        dataOutputStream.writeInt(identificator);
+        dataOutputStream.writeShort(identificatorAtr);
+        dataOutputStream.writeInt(typeInd);
+        dataOutputStream.writeShort(typeLen);
+        dataOutputStream.writeInt(typeMod);
+        dataOutputStream.writeShort(formatCode);
+
+
+
+/*
+        Byte1('D')
+        Identifies the message as a data row.
+
+                Int32
+        Length of message contents in bytes, including self.
+
+                Int16
+        The number of column values that follow (possibly zero).
+
+                Next, the following pair of fields appear for each column:
+
+        Int32
+        The length of the column value, in bytes (this count does not include itself). Can be zero. As a special case, -1 indicates a NULL column value. No value bytes follow in the NULL case.
+
+        Byten
+        The value of the column, in the format indicated by the associated format code. n is the above lengt*/
+
+        int tLen = 0;
+        short num = 1;
+        String val = "324";
+        int lenCol = nullTerminateString(val).length;
+        byte[] bval = nullTerminateString(val);
+
+        tLen = 4+2+4+bval.length;
+        dataOutputStream.writeByte('D');
+        dataOutputStream.writeInt(tLen);
+        dataOutputStream.writeShort(num);
+        dataOutputStream.writeInt(lenCol);
+        dataOutputStream.writeBytes(new String(nullTerminateString(val)));
+
+        dataOutputStream.flush();
+
+
+
+    }
+
+    private class MsgParser {
 
 		public short parseShort(byte[] bytes) {
 			byte[] typeBytes = new byte[2];
