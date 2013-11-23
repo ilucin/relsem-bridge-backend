@@ -10,9 +10,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface DataSource {
-    public List<String> getEntityCandidates();
+    public List<Object> getEntityCandidates(int limit, int offset);
     public List<String> getAttributes(String entity);
     public List<Class> getType(String entity, String attribute);
     public List<Object> getValues(String entity, String attribute);
-
 }
