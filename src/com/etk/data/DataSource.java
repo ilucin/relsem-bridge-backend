@@ -15,9 +15,9 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface DataSource {
-    public List<EntityMapping> getEntityCandidates();
-    public List<AttributeMapping> getAttributes(EntityMapping entity);
-    public Type getType(String entity, String attribute);
-    public List<Object> getValues(EntityMapping entity, AttributeMapping attribute);
 
+    public List<Object> getEntityCandidates(int limit, int offset, boolean label);
+    public List<Object> getAttributes(String entity, int limit, int offset, boolean label);
+    public List<Class> getType(String entity, String attribute);
+    public List<Object> getValues(String entity, String attributes[], int limit, int offset);
 }
