@@ -12,19 +12,36 @@ import com.hp.hpl.jena.query.ResultSet;
 
 public class RemoteSourceRDF implements DataSource{
 	String service;
-	String queryString;
+	String queryStringTemplate;
 	
 	public RemoteSourceRDF( String service ){
 		this.service = service;
 		
-		queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+		queryStringTemplate = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 					  "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ";
 	}
 	
 	@Override
-	public List<Object> getEntityCandidates(int limit, int offset) {
-		queryString += "SELECT DISTINCT ?o WHERE { ?s a ?o }" + 
-					   " ORDER BY ?o";
+	public List<Object> getEntityCandidates(int limit, int offset, boolean label) {
+		String queryString = queryStringTemplate;
+		queryString += "SELECT DISTINCT ?o ?label WHERE { ?s a ?o. ";
+					   
+		// Checks should the sparql query ask for a rdfs:label
+		// This should be used only if you are sure that there is a predicate
+		// rdfs:label in the data source
+		if( label ){
+			queryString += "?o rdfs:label ?label. " + 
+                           "FILTER (lang(?label) = 'en' || lang(?label) = '') ";
+		}
+		
+		queryString += "}";
+		/* For now I will disable order by, because it is very slow
+		if( limit != 0 && offset != 0 ){
+			queryString += " ORDER BY ?o";
+		}
+		*/
+		
+		
 		
 		if( limit != 0 ){
 			queryString += " LIMIT " + Integer.toString( limit );
@@ -32,41 +49,94 @@ public class RemoteSourceRDF implements DataSource{
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
 		}
-				
+		System.out.println(queryString);		
 		Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
     	
-		return entityCandidatesFromRS(resultSet);
+		return entityCandidatesFromRS(resultSet, label);
 	}
 	
-	private List<Object> entityCandidatesFromRS(ResultSet resultSet){
+	private List<Object> entityCandidatesFromRS(ResultSet resultSet, boolean label){
 		List<Object> entityCandidates = new ArrayList<Object>();
 		
 		QuerySolution qs;
- 		while( resultSet.hasNext() ){
- 			qs = resultSet.next();
-			entityCandidates.add( new EntityCandidate(qs.get("o").toString()) );
+		if( label ){
+			while( resultSet.hasNext() ){
+	 			qs = resultSet.next();
+				entityCandidates.add( new EntityCandidate(qs.get("o").toString(), qs.get("label").toString()) );
+			}
 		}
+		else{
+			while( resultSet.hasNext() ){
+	 			qs = resultSet.next();
+				entityCandidates.add( new EntityCandidate(qs.get("o").toString()) );
+			}
+		}
+ 		
 		
 		
 		return entityCandidates;
 	}
 
 	@Override
-	public List<String> getAttributes(String entity){
-		String filter[];
-		//if( entity.startsWith("http") ){
-			//String filter[] = entity.
-		//}
+	public List<Object> getAttributes(String entity, int limit, int offset, boolean label){
+		String queryString = queryStringTemplate;
+		queryString += "Select distinct ?p ?label WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
+					   " ?s ?p ?o. ";
 		
-		queryString += "select distinct ?p where { ?s ?p ?o." +
-					   "?o rdf:type <" + entity + ">." +
-					   "FILTER(STRSTARTS(STR(?p), 'http://dbpedia.org/'))." +
-					   "}";
+		// Checks should the sparql query ask for a rdfs:label
+		// This should be used only if you are sure that there is a predicate
+		// rdfs:label in the data source
+		if( label ){
+			queryString += "?p rdfs:label ?label. " + 
+                           "FILTER (lang(?label) = 'en' || lang(?label) = '') ";
+		}
+		
+		queryString += "}";
+		/* For now I will disable order by, because it is very slow
+		if( limit != 0 && offset != 0 ){
+			queryString += " ORDER BY ?o";
+		}
+		*/
+		
+		
+		
+		if( limit != 0 ){
+			queryString += " LIMIT " + Integer.toString( limit );
+		}
+		if( offset != 0 ){
+			queryString += " OFFSET " + Integer.toString( offset );
+		}	
+		Query query = QueryFactory.create(queryString);
+    	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
+    											service, query );
+    	ResultSet resultSet = queryExecution.execSelect();
 
-		return null;
+		return atributesFromRS(resultSet, label);
+	}
+	
+	private List<Object> atributesFromRS(ResultSet resultSet, boolean label){
+		List<Object> atributeCandidates = new ArrayList<Object>();
+		
+		QuerySolution qs;
+		if( label ){
+			while( resultSet.hasNext() ){
+	 			qs = resultSet.next();
+				atributeCandidates.add( new AttributeCandidate(qs.get("p").toString(), qs.get("label").toString()) );
+			}
+		}
+		else{
+			while( resultSet.hasNext() ){
+	 			qs = resultSet.next();
+				atributeCandidates.add( new EntityCandidate(qs.get("p").toString()) );
+			}
+		}
+ 		
+		
+		
+		return atributeCandidates;
 	}
 
 	@Override
@@ -76,8 +146,64 @@ public class RemoteSourceRDF implements DataSource{
 	}
 
 	@Override
-	public List<Object> getValues(String entity, String attribute) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Object> getValues(String entity, String attributes[], int limit, int offset) {
+		String queryString = queryStringTemplate;
+		queryString += "Select distinct ?s " + repeateString("?o", attributes.length) + 
+					   " WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">.";
+		
+		for(int i = 0; i < attributes.length; i++){
+			queryString += "?s" + " <" + attributes[i] + "> " + "?o" + i + ".";
+		}
+					   
+
+		queryString += "}";
+		/* For now I will disable order by, because it is very slow
+		if( limit != 0 && offset != 0 ){
+			queryString += " ORDER BY ?o ";
+		}
+		*/
+		
+		
+		if( limit != 0 ){
+			queryString += " LIMIT " + Integer.toString( limit );
+		}
+		if( offset != 0 ){
+			queryString += " OFFSET " + Integer.toString( offset );
+		}		
+		Query query = QueryFactory.create(queryString);
+    	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
+    											service, query );
+    	ResultSet resultSet = queryExecution.execSelect();
+
+		return valuesFromRS(resultSet, attributes.length);
+	}
+	
+	private List<Object> valuesFromRS(ResultSet resultSet, int numOfAttributes){
+		List<Object> valueCandidates = new ArrayList<Object>();
+		
+		QuerySolution qs;
+		ValueCandidate valueCandidate;
+		while( resultSet.hasNext() ){
+			qs = resultSet.next();
+			valueCandidate = new ValueCandidate(qs.get("s").toString());
+			
+			for(int i = 0; i < numOfAttributes; i++){
+	 			valueCandidate.addOneValue(qs.get(String.format("?o%d", i)).toString());
+			}
+			valueCandidates.add(valueCandidate);
+		}
+ 		
+		
+		return valueCandidates;
+	}
+	
+	private String repeateString(String s, int n){
+		String out = " ";
+		
+		for(int i = 0; i < n; i++){
+			out += s + i + " ";
+		}
+		
+		return out;
 	}
 }

@@ -1,11 +1,12 @@
 package com.etk.data;
 
-public class EntityCandidate {
+public class AttributeCandidate {
 	private String uri;
 	private String label;
 	
-	public EntityCandidate(String uri, String label){
+	public AttributeCandidate(String uri, String label){
 		this.uri = uri;
+		
 		if( label.contains("@") ){
 			this.label = label.substring(0, label.lastIndexOf('@') );
 		}
@@ -14,12 +15,12 @@ public class EntityCandidate {
 		}
 	}
 	
-	public EntityCandidate(String uri){
+	public AttributeCandidate(String uri){
 		this.uri = uri;
 		this.label = labelFromURI(uri);
 		
 	}
-	
+
 	private String labelFromURI(String uri){
 		String labelParts[] = uri.substring(uri.lastIndexOf('/') + 1).split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 		StringBuilder out = new StringBuilder();
@@ -31,7 +32,7 @@ public class EntityCandidate {
 		
 		return out.toString().substring(0, out.length()).trim();
 	}
-
+	
 	public String getUri() {
 		return uri;
 	}
