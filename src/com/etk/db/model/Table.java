@@ -48,7 +48,7 @@ public class Table implements RowCollection {
 
     @Override
     public int getAttributeIndex(String attribute) {
-        return attributePositions.get(attribute);
+        return attributePositions.get(attribute.toUpperCase());
     }
 
     @Override

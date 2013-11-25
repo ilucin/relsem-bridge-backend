@@ -22,4 +22,5 @@ bin/**
 .DS_Store
 local.properties
 /bin
+
 t_*
