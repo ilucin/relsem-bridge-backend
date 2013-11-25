@@ -35,30 +35,50 @@ public class Test {
         r2.add(new RowImple(o1));
 
 
+        List<Row> r3 = new ArrayList<Row>();
+        o1 = new Object[] {"Marko", "gavrilovic", 253};
+        r3.add(new RowImple(o1));
+        o1 = new Object[]{"Petar", "piko", 212};
+        r3.add(new RowImple(o1));
+        o1 = new Object[]{"Ivan", "podravka", 222};
+        r3.add(new RowImple(o1));
+
+
+        List<Row> r4 = new ArrayList<Row>();
+        o1 = new Object[] {"prva", "podravka", 8432};
+        r4.add(new RowImple(o1));
+        o1 = new Object[]{"peta", "gavrilovic", 3104};
+        r4.add(new RowImple(o1));
+        o1 = new Object[]{"desta", "piko", 5467};
+        r4.add(new RowImple(o1));
 
 
 
-        String[] t1a  = {"Ime","Prezime","OIB"};
+
+
+        String[] t1a  = {"Ime","Prezime","ccode"};
         Table t1 = new Table(t1a,r1);
-        String[] t2a  = {"City","Satate","OIB"};
+        String[] t2a  = {"City","Satate","ccode"};
         Table t2 = new Table(t2a,r2);
 
-        JoinTable jt  = new JoinTable(t1,t2,"oIb");
-        System.out.println(jt);
+        String[] t3a  = {"Ime","pasteta","OIB"};
+        Table t3 = new Table(t3a,r3);
+        String[] t4a  = {"Kurec","pasteta","fsdf"};
+        Table t4 = new Table(t4a,r4);
 
 
-        /*for(Row row : t1.getRows()) {
-            System.out.println(row.toString());
+
+
+        JoinTable jt1  = new JoinTable(t1,t2,"ccode");
+        JoinTable jt2  = new JoinTable(t3,t4,"pasteta");
+        //System.out.println(jt2.getAttributes());
+        //System.out.println(jt1.getAttributes());
+        JoinTable jt  = new JoinTable(jt1,jt2,"Ime");
+        for(Row r : jt.getRows()) {
+            System.out.println(r.toString());
         }
-        for(Row row : t2.getRows()) {
-            System.out.println(row.toString());
-        }*/
 
+        System.out.println(jt.getAttributes().toString());
 
-       /* String[] t2a  = {"Grad","Drzava","OIB"};
-        Table t2 = new Table(t2a);
-
-        JoinTable jt = new JoinTable(t1,t2,"oib");
-        System.out.println(jt);*/
     }
 }

@@ -1,6 +1,10 @@
 package com.etk.network.client;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -16,10 +20,12 @@ public class Client {
 
 		// connect to the database
 		conn = connectToDatabaseOrDie();
-
-		// get data
+        System.out.println("Connected!");
+        
+        // get data
 		query(conn, list);
-
+		
+		System.out.println("QuerySent!");
 		// print results
 		printAll(list);
 	}
@@ -36,19 +42,18 @@ public class Client {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
 			ResultSet rs = st
-					.executeQuery("SELECT id, name, surname FROM student.student");
+					.executeQuery("SELECT id FROM student.student");
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				String name = rs.getString("name");
-				String surname = rs.getString("surname");
-				list.add(new Student(id, name, surname));
-			}
+                System.out.println(id);
+            }
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
 			System.err.println("Threw a SQLException.");
-			System.err.println(se.getMessage());
-		}
+            System.err.println(se.getMessage());
+            se.printStackTrace();
+        }
 	}
 
 	private Connection connectToDatabaseOrDie() {
@@ -59,7 +64,7 @@ public class Client {
             String database = "Test";
             String username = "postgres";
             String password = "postgres";
-            String url = "jdbc:postgresql:5000//" + host + "/" + database;
+            String url = "jdbc:postgresql://localhost:5000/dbname";
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
 			System.err.println("I have not found the PostgreSQL driver class");

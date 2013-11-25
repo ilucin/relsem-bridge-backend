@@ -1,10 +1,9 @@
 package com.etk.network.server;
 import java.io.*;
 import java.net.*;
-import java.security.*;
 
 
-public class sample_server {
+public class JDBCServer {
 
   private static int port=5000, maxConnections=0;
   // Listen for incoming connections and handle them
@@ -14,12 +13,13 @@ public class sample_server {
     try{
       ServerSocket listener = new ServerSocket(port);
       Socket server;
-
-      while((i++ < maxConnections) || (maxConnections == 0)){
-        doComms connection;
+        System.out.println("server started!");
+      while(true){
+        SessionHandler connection;
 
         server = listener.accept();
-        doComms conn_c= new doComms(server);
+        System.out.println("connection accepted");
+        SessionHandler conn_c= new SessionHandler(server);
         Thread t = new Thread(conn_c);
         t.start();
       }
