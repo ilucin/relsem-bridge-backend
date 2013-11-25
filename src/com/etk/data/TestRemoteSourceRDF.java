@@ -26,8 +26,8 @@ DataSource ds = new RemoteSourceRDF("http://dbpedia.org/sparql");
 		
 		
 		System.out.println("*************************************Values Test******************************************************");
-		String strs[] = {"http://dbpedia.org/ontology/Canal/maximumBoatBeam", "http://dbpedia.org/ontology/Canal/maximumBoatLength"};
-		List<Object> vc = ds.getValues("http://dbpedia.org/ontology/BodyOfWater", strs, 500, 0);
+		String strs[] = {"http://dbpedia.org/ontology/city", "http://dbpedia.org/ontology/country"};
+		List<Object> vc = ds.getValues("http://dbpedia.org/ontology/BodyOfWater", strs, 50, 0);
 		ValueCandidate vCan;
 		for( Object one : vc){
 			vCan = (ValueCandidate) one;
