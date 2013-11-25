@@ -131,7 +131,7 @@ public class RemoteSourceRDF implements DataSource{
 		else{
 			while( resultSet.hasNext() ){
 	 			qs = resultSet.next();
-				atributeCandidates.add( new EntityCandidate(qs.get("p").toString()) );
+				atributeCandidates.add( new AttributeCandidate(qs.get("p").toString()) );
 			}
 		}
  		
