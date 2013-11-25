@@ -1,5 +1,8 @@
 package com.etk.data;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 public class EntityCandidate {
 	private String uri;
 	private String label;
@@ -21,15 +24,12 @@ public class EntityCandidate {
 	}
 	
 	private String labelFromURI(String uri){
-		String labelParts[] = uri.substring(uri.lastIndexOf('/') + 1).split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-		StringBuilder out = new StringBuilder();
-		
-		for( String one : labelParts ){
-			out.append(one);
-			out.append(" ");
+		try {
+			return URLDecoder.decode((uri.substring(uri.lastIndexOf('/') + 1)), "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			return "";
+			//e.printStackTrace();
 		}
-		
-		return out.toString().substring(0, out.length()).trim();
 	}
 
 	public String getUri() {

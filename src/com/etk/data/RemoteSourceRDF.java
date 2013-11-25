@@ -9,6 +9,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class RemoteSourceRDF implements DataSource{
 	String service;
@@ -175,20 +176,33 @@ public class RemoteSourceRDF implements DataSource{
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
 
-		return valuesFromRS(resultSet, attributes.length);
+		return valuesFromRS(resultSet, attributes);
 	}
 	
-	private List<Object> valuesFromRS(ResultSet resultSet, int numOfAttributes){
+	private List<Object> valuesFromRS(ResultSet resultSet, String attributes[] ){
 		List<Object> valueCandidates = new ArrayList<Object>();
+		int numOfAttributes = attributes.length;
 		
 		QuerySolution qs;
 		ValueCandidate valueCandidate;
+		RDFNode node;
+		String resourceName;
 		while( resultSet.hasNext() ){
 			qs = resultSet.next();
 			valueCandidate = new ValueCandidate(qs.get("s").toString());
 			
 			for(int i = 0; i < numOfAttributes; i++){
-	 			valueCandidate.addOneValue(qs.get(String.format("?o%d", i)).toString());
+				node = qs.get(String.format("?o%d", i));
+				
+				if( node.isResource() ){
+					resourceName = node.asResource().getURI();
+					valueCandidate.addOneValue(
+							resourceName.substring(resourceName.lastIndexOf("/") + 1), 
+							attributes[i]);
+				}
+				else{
+					valueCandidate.addOneValue(node.toString(), attributes[i]);
+				}
 			}
 			valueCandidates.add(valueCandidate);
 		}
@@ -205,5 +219,9 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		
 		return out;
+	}
+	
+	public List<String> getAvailableEndpoints(){
+		return null;
 	}
 }

@@ -20,4 +20,5 @@ public interface DataSource {
     public List<Object> getAttributes(String entity, int limit, int offset, boolean label);
     public List<Class> getType(String entity, String attribute);
     public List<Object> getValues(String entity, String attributes[], int limit, int offset);
+    public List<String> getAvailableEndpoints();
 }

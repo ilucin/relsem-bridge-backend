@@ -1,5 +1,7 @@
 package com.etk.data;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 public class TestRemoteSourceRDF {
@@ -12,7 +14,12 @@ DataSource ds = new RemoteSourceRDF("http://dbpedia.org/sparql");
 		for( Object one : ec){
 			eCan = (EntityCandidate) one;
 			
-			System.out.println(eCan.getUri() + " - " + eCan.getLabel());
+			try {
+				System.out.println(URLDecoder.decode(eCan.getUri(), "utf-8") + " - " + eCan.getLabel());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		System.out.println("*************************************Attributes Test******************************************************");
@@ -21,21 +28,32 @@ DataSource ds = new RemoteSourceRDF("http://dbpedia.org/sparql");
 		for( Object one : ac){
 			aCan = (AttributeCandidate) one;
 			
-			System.out.println(aCan.getUri() + " - " + aCan.getLabel());
+			try {
+				System.out.println(URLDecoder.decode(aCan.getUri(), "utf-8") + " - " + 
+								   aCan.getLabel());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		
 		System.out.println("*************************************Values Test******************************************************");
 		String strs[] = {"http://dbpedia.org/ontology/city", "http://dbpedia.org/ontology/country"};
-		List<Object> vc = ds.getValues("http://dbpedia.org/ontology/BodyOfWater", strs, 50, 0);
+		List<Object> vc = ds.getValues("http://dbpedia.org/ontology/BodyOfWater", strs, 150, 0);
 		ValueCandidate vCan;
+		
 		for( Object one : vc){
 			vCan = (ValueCandidate) one;
 			
-			
-			System.out.println(vCan.getSubject() + " - " + 
-			vCan.getValues().get(0).split("\\^")[0] + " *** " + 
-			vCan.getValues().get(1).split("\\^")[0]);
+			try {
+				System.out.println(URLDecoder.decode(vCan.getSubject() , "utf-8") + " - " + 
+				URLDecoder.decode(vCan.getValues().get("http://dbpedia.org/ontology/city").split("\\^")[0], "utf-8") + " *** " + 
+				URLDecoder.decode(vCan.getValues().get("http://dbpedia.org/ontology/country").split("\\^")[0], "utf-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

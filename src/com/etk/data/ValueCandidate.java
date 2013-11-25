@@ -1,19 +1,19 @@
 package com.etk.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ValueCandidate {
 	private String subject;
-	private List<String> values;
+	private Map<String, String> values;
 	
-	public ValueCandidate(String subject, List<String> values) {
+	public ValueCandidate(String subject, Map<String, String> values) {
 		this.subject = subject;
 		this.values = values;
 	}
 	
 	public ValueCandidate(String subject){
-		this(subject, new ArrayList<String>());
+		this(subject, new HashMap<String, String>());
 	}
 	
 	public String getSubject() {
@@ -22,14 +22,17 @@ public class ValueCandidate {
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	public List<String> getValues() {
+	
+	public void addOneValue(String value, String attribute){
+		values.put(attribute, value);
+	}
+
+	public Map<String, String> getValues() {
 		return values;
 	}
-	public void setValues(List<String> values) {
+
+	public void setValues(Map<String, String> values) {
 		this.values = values;
-	}
-	public void addOneValue(String value){
-		values.add(value);
 	}	
 	
 }
