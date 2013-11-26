@@ -10,6 +10,24 @@ public class Attribute {
     private String uri;
     private String name;
     private Type type;
+    private boolean notnull;
+    private String defaultVal;
+
+    public void setNotnull(boolean notnull) {
+        this.notnull = notnull;
+    }
+
+    public void setDefaultVal(String defaultVal) {
+        this.defaultVal = defaultVal;
+    }
+
+    public boolean isNotnull() {
+        return notnull;
+    }
+
+    public String getDefaultVal() {
+        return defaultVal;
+    }
 
     public String getUri() {
         return uri;
@@ -41,6 +59,14 @@ public class Attribute {
 
         public Builder() {
             this.instance = new Attribute();
+        }
+        public Builder setNotNull(boolean notNull) {
+            this.instance.setNotnull(notNull);
+            return this;
+        }
+        public Builder setDefaultValue(String defaultValue) {
+            this.instance.setDefaultVal(defaultValue);
+            return this;
         }
         public Builder setName(String name) {
             this.instance.setName(name);
