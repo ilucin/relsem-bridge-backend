@@ -25,8 +25,8 @@ public class RemoteSourceRDF implements DataSource{
 	@Override
 	public List<Object> getEntityCandidates(int limit, int offset, boolean label) {
 		String queryString = queryStringTemplate;
-		queryString += "SELECT DISTINCT ?o ?label WHERE { ?s a ?o. ";
-					   
+		queryString += "SELECT (COUNT(?o) as ?num) ?o WHERE { ?s a ?o. ";
+
 		// Checks should the sparql query ask for a rdfs:label
 		// This should be used only if you are sure that there is a predicate
 		// rdfs:label in the data source
@@ -42,7 +42,8 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		*/
 		
-		
+		//Add order by and sort by
+		queryString += " GROUP BY ?o ORDER BY ASC(?num)";
 		
 		if( limit != 0 ){
 			queryString += " LIMIT " + Integer.toString( limit );
@@ -50,6 +51,9 @@ public class RemoteSourceRDF implements DataSource{
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
 		}
+		
+		
+		
 		System.out.println(queryString);		
 		Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
@@ -84,9 +88,13 @@ public class RemoteSourceRDF implements DataSource{
 	@Override
 	public List<Object> getAttributes(String entity, int limit, int offset, boolean label){
 		String queryString = queryStringTemplate;
-		queryString += "Select distinct ?p ?label WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
-					   " ?s ?p ?o. ";
-		
+		queryString += "Select (count(?p) as ?num) ?p WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
+					   " ?s ?p ?o." + 
+					   "FILTER ( regex(str(?p), 'http://dbpedia.org/property')). ";
+
+		/*This doesn't work for some reason
+		 *  " ?p a rdf:Property. " +
+		 */
 		// Checks should the sparql query ask for a rdfs:label
 		// This should be used only if you are sure that there is a predicate
 		// rdfs:label in the data source
@@ -102,7 +110,8 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		*/
 		
-		
+		//Add group by and order by
+		queryString += "group by ?p order by desc(?num) ";
 		
 		if( limit != 0 ){
 			queryString += " LIMIT " + Integer.toString( limit );
@@ -110,6 +119,7 @@ public class RemoteSourceRDF implements DataSource{
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
 		}	
+		System.out.println(queryString);
 		Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
@@ -130,7 +140,8 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		else{
 			while( resultSet.hasNext() ){
-	 			qs = resultSet.next();
+				qs = resultSet.next();
+	 			
 				atributeCandidates.add( new AttributeCandidate(qs.get("p").toString()) );
 			}
 		}
