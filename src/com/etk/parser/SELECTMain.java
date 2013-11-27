@@ -1,10 +1,4 @@
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
+package com.etk.parser;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,23 +10,14 @@ import java.io.InputStream;
 public class SELECTMain {
 
     public static void main(String[] args) throws Exception {
-        String inputFile = null;
-        if ( args.length>0 ) inputFile = args[0];
-        InputStream is = System.in;
-        if ( inputFile!=null ) {
-            is = new FileInputStream(inputFile);
-        }
-        ANTLRInputStream input = new ANTLRInputStream(is);
-        SELECTLexer lexer = new SELECTLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SELECTParser parser = new SELECTParser(tokens);
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.selectStmnt();
+       SelectQueryToObject selectQueryToObject = new SelectQueryToObject(args);
+       SelectObject selectObject = selectQueryToObject.getSelectObject();
+       for(String columnName : selectObject.getColumnNames()){
+           System.out.println("Column: " + columnName);
+       }
 
-      /*  ParseTreeWalker walker = new ParseTreeWalker();
-        XMLEmitter converter = new XMLEmitter();
-        walker.walk(converter, tree);
-        System.out.println(converter.getXML(tree));
-    */
+       for(String tableName : selectObject.getTableNames()){
+           System.out.println("Table: " + tableName);
+       }
     }
 }

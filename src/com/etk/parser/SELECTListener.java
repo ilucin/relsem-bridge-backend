@@ -1,4 +1,4 @@
-// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
+package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -17,17 +17,6 @@ public interface SELECTListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWhereClause(@NotNull SELECTParser.WhereClauseContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link SELECTParser#tableReference}.
-	 * @param ctx the parse tree
-	 */
-	void enterTableReference(@NotNull SELECTParser.TableReferenceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SELECTParser#tableReference}.
-	 * @param ctx the parse tree
-	 */
-	void exitTableReference(@NotNull SELECTParser.TableReferenceContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link SELECTParser#tableExpression}.
@@ -140,17 +129,6 @@ public interface SELECTListener extends ParseTreeListener {
 	void exitBooleanTerm(@NotNull SELECTParser.BooleanTermContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link SELECTParser#tableReferenceList}.
-	 * @param ctx the parse tree
-	 */
-	void enterTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SELECTParser#tableReferenceList}.
-	 * @param ctx the parse tree
-	 */
-	void exitTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link SELECTParser#booleanPrimary}.
 	 * @param ctx the parse tree
 	 */
@@ -160,6 +138,17 @@ public interface SELECTListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
+	 * @param ctx the parse tree
+	 */
+	void enterTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
+	 * @param ctx the parse tree
+	 */
+	void exitTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link SELECTParser#derivedColumnList}.
@@ -184,6 +173,17 @@ public interface SELECTListener extends ParseTreeListener {
 	void exitSetQuantifier(@NotNull SELECTParser.SetQuantifierContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link SELECTParser#tableName}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableName(@NotNull SELECTParser.TableNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SELECTParser#tableName}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableName(@NotNull SELECTParser.TableNameContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link SELECTParser#parenthizedBooleanValueExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -204,6 +204,17 @@ public interface SELECTListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSearchCondition(@NotNull SELECTParser.SearchConditionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link SELECTParser#columnName}.
+	 * @param ctx the parse tree
+	 */
+	void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SELECTParser#columnName}.
+	 * @param ctx the parse tree
+	 */
+	void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link SELECTParser#asClause}.
