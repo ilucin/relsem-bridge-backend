@@ -13,10 +13,10 @@ selectList:
 	| derivedColumn (',' derivedColumn)* ;
 
 derivedColumn:
-	COLUMNNAME (asClause)? ;
+	columnName (asClause)? ;
 
 asClause:
-	'AS' COLUMNNAME ;
+	'AS' columnName ;
 
 tableExpression :
 	 fromClause
@@ -26,21 +26,16 @@ tableExpression :
     ;
 
 fromClause :
-	'FROM' tableReferenceList ;
-
-tableReferenceList :
-	tableReference (','tableReference)* ;
-
-tableReference :
-    tablePrimary ;
-
+	'FROM' tablePrimary (',' tablePrimary)*  ;
 
 tablePrimary :
-      TABLENAME (('AS')? TABLENAME
-      ( '(' derivedColumnList ')' )? )?;
+      tableName ('AS' tablePrimaryAs)? ;
+
+tablePrimaryAs :
+      tableName ( '(' derivedColumnList ')' )?   ;
 
 derivedColumnList :
-	COLUMNNAME (( ',' COLUMNNAME)+)? ;
+	columnName (',' columnName)* ;
 
 whereClause :
 	'WHERE' searchCondition;
@@ -82,9 +77,11 @@ parenthizedBooleanValueExpression :
 
 
 
-COLUMNNAME:  ID ;
-TABLENAME: ID ;
-ID : ID_LETTER(ID_LETTER | DIGIT)*;
-ID_LETTER : [a_zA_Z] | '_' ;
-fragment DIGIT : [0-9] ;
+columnName:  ID;
+tableName: ID;
+ID : ID_LETTER (ID_LETTER | DIGIT)* ;
+fragment ID_LETTER : 'a'..'z'|'A'..'Z'|'_' ;
+fragment DIGIT : '0'..'9' ;
+WS : [ \t\r\n]+ -> skip ; // Define whitespace rule, toss it out
+
 
