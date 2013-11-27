@@ -1,15 +1,15 @@
-package com.etk.parser;
+package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
 
-
-// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
-import org.antlr.v4.runtime.atn.*;
-import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNSimulator;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SELECTParser extends Parser {
@@ -19,26 +19,27 @@ public class SELECTParser extends Parser {
 	public static final int
 		T__16=1, T__15=2, T__14=3, T__13=4, T__12=5, T__11=6, T__10=7, T__9=8, 
 		T__8=9, T__7=10, T__6=11, T__5=12, T__4=13, T__3=14, T__2=15, T__1=16, 
-		T__0=17, COLUMNNAME=18, TABLENAME=19, ID=20, ID_LETTER=21;
+		T__0=17, ID=18, WS=19;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'AS'", "'DISTINCT'", "'AND'", "'IS'", "'ALL'", "')'", "','", 
 		"'OR'", "'*'", "'WHERE'", "'('", "'FROM'", "'TRUE'", "'UNKNOWN'", "'NOT'", 
-		"'SELECT'", "'FALSE'", "COLUMNNAME", "TABLENAME", "ID", "ID_LETTER"
+		"'SELECT'", "'FALSE'", "ID", "WS"
 	};
 	public static final int
 		RULE_selectStmnt = 0, RULE_querySpecification = 1, RULE_setQuantifier = 2, 
 		RULE_selectList = 3, RULE_derivedColumn = 4, RULE_asClause = 5, RULE_tableExpression = 6, 
-		RULE_fromClause = 7, RULE_tableReferenceList = 8, RULE_tableReference = 9, 
-		RULE_tablePrimary = 10, RULE_derivedColumnList = 11, RULE_whereClause = 12, 
-		RULE_searchCondition = 13, RULE_booleanValueExpression = 14, RULE_booleanTerm = 15, 
-		RULE_booleanFactor = 16, RULE_booleanTest = 17, RULE_truthValue = 18, 
-		RULE_booleanPrimary = 19, RULE_booleanPredicand = 20, RULE_parenthizedBooleanValueExpression = 21;
+		RULE_fromClause = 7, RULE_tablePrimary = 8, RULE_tablePrimaryAs = 9, RULE_derivedColumnList = 10, 
+		RULE_whereClause = 11, RULE_searchCondition = 12, RULE_booleanValueExpression = 13, 
+		RULE_booleanTerm = 14, RULE_booleanFactor = 15, RULE_booleanTest = 16, 
+		RULE_truthValue = 17, RULE_booleanPrimary = 18, RULE_booleanPredicand = 19, 
+		RULE_parenthizedBooleanValueExpression = 20, RULE_columnName = 21, RULE_tableName = 22;
 	public static final String[] ruleNames = {
 		"selectStmnt", "querySpecification", "setQuantifier", "selectList", "derivedColumn", 
-		"asClause", "tableExpression", "fromClause", "tableReferenceList", "tableReference", 
-		"tablePrimary", "derivedColumnList", "whereClause", "searchCondition", 
-		"booleanValueExpression", "booleanTerm", "booleanFactor", "booleanTest", 
-		"truthValue", "booleanPrimary", "booleanPredicand", "parenthizedBooleanValueExpression"
+		"asClause", "tableExpression", "fromClause", "tablePrimary", "tablePrimaryAs", 
+		"derivedColumnList", "whereClause", "searchCondition", "booleanValueExpression", 
+		"booleanTerm", "booleanFactor", "booleanTest", "truthValue", "booleanPrimary", 
+		"booleanPredicand", "parenthizedBooleanValueExpression", "columnName", 
+		"tableName"
 	};
 
 	@Override
@@ -81,8 +82,8 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44); match(16);
-			setState(45); querySpecification();
+			setState(46); match(16);
+			setState(47); querySpecification();
 			}
 		}
 		catch (RecognitionException re) {
@@ -127,16 +128,16 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(48);
+			setState(50);
 			_la = _input.LA(1);
 			if (_la==2 || _la==5) {
 				{
-				setState(47); setQuantifier();
+				setState(49); setQuantifier();
 				}
 			}
 
-			setState(50); selectList();
-			setState(51); tableExpression();
+			setState(52); selectList();
+			setState(53); tableExpression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -172,7 +173,7 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(55);
 			_la = _input.LA(1);
 			if ( !(_la==2 || _la==5) ) {
 			_errHandler.recoverInline(this);
@@ -217,29 +218,29 @@ public class SELECTParser extends Parser {
 		enterRule(_localctx, 6, RULE_selectList);
 		int _la;
 		try {
-			setState(64);
+			setState(66);
 			switch (_input.LA(1)) {
 			case 9:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(55); match(9);
+				setState(57); match(9);
 				}
 				break;
-			case COLUMNNAME:
+			case ID:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(56); derivedColumn();
-				setState(61);
+				setState(58); derivedColumn();
+				setState(63);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==7) {
 					{
 					{
-					setState(57); match(7);
-					setState(58); derivedColumn();
+					setState(59); match(7);
+					setState(60); derivedColumn();
 					}
 					}
-					setState(63);
+					setState(65);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
@@ -261,9 +262,11 @@ public class SELECTParser extends Parser {
 	}
 
 	public static class DerivedColumnContext extends ParserRuleContext {
-		public TerminalNode COLUMNNAME() { return getToken(SELECTParser.COLUMNNAME, 0); }
 		public AsClauseContext asClause() {
 			return getRuleContext(AsClauseContext.class,0);
+		}
+		public ColumnNameContext columnName() {
+			return getRuleContext(ColumnNameContext.class,0);
 		}
 		public DerivedColumnContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -286,12 +289,12 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(66); match(COLUMNNAME);
-			setState(68);
+			setState(68); columnName();
+			setState(70);
 			_la = _input.LA(1);
 			if (_la==1) {
 				{
-				setState(67); asClause();
+				setState(69); asClause();
 				}
 			}
 
@@ -309,7 +312,9 @@ public class SELECTParser extends Parser {
 	}
 
 	public static class AsClauseContext extends ParserRuleContext {
-		public TerminalNode COLUMNNAME() { return getToken(SELECTParser.COLUMNNAME, 0); }
+		public ColumnNameContext columnName() {
+			return getRuleContext(ColumnNameContext.class,0);
+		}
 		public AsClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -330,8 +335,8 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(70); match(1);
-			setState(71); match(COLUMNNAME);
+			setState(72); match(1);
+			setState(73); columnName();
 			}
 		}
 		catch (RecognitionException re) {
@@ -369,7 +374,7 @@ public class SELECTParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(73); fromClause();
+			setState(75); fromClause();
 			}
 		}
 		catch (RecognitionException re) {
@@ -384,8 +389,11 @@ public class SELECTParser extends Parser {
 	}
 
 	public static class FromClauseContext extends ParserRuleContext {
-		public TableReferenceListContext tableReferenceList() {
-			return getRuleContext(TableReferenceListContext.class,0);
+		public List<TablePrimaryContext> tablePrimary() {
+			return getRuleContexts(TablePrimaryContext.class);
+		}
+		public TablePrimaryContext tablePrimary(int i) {
+			return getRuleContext(TablePrimaryContext.class,i);
 		}
 		public FromClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -404,53 +412,12 @@ public class SELECTParser extends Parser {
 	public final FromClauseContext fromClause() throws RecognitionException {
 		FromClauseContext _localctx = new FromClauseContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_fromClause);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(75); match(12);
-			setState(76); tableReferenceList();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class TableReferenceListContext extends ParserRuleContext {
-		public List<TableReferenceContext> tableReference() {
-			return getRuleContexts(TableReferenceContext.class);
-		}
-		public TableReferenceContext tableReference(int i) {
-			return getRuleContext(TableReferenceContext.class,i);
-		}
-		public TableReferenceListContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_tableReferenceList; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterTableReferenceList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitTableReferenceList(this);
-		}
-	}
-
-	public final TableReferenceListContext tableReferenceList() throws RecognitionException {
-		TableReferenceListContext _localctx = new TableReferenceListContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_tableReferenceList);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(78); tableReference();
+			setState(77); match(12);
+			setState(78); tablePrimary();
 			setState(83);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -458,7 +425,7 @@ public class SELECTParser extends Parser {
 				{
 				{
 				setState(79); match(7);
-				setState(80); tableReference();
+				setState(80); tablePrimary();
 				}
 				}
 				setState(85);
@@ -478,51 +445,12 @@ public class SELECTParser extends Parser {
 		return _localctx;
 	}
 
-	public static class TableReferenceContext extends ParserRuleContext {
-		public TablePrimaryContext tablePrimary() {
-			return getRuleContext(TablePrimaryContext.class,0);
-		}
-		public TableReferenceContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_tableReference; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterTableReference(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitTableReference(this);
-		}
-	}
-
-	public final TableReferenceContext tableReference() throws RecognitionException {
-		TableReferenceContext _localctx = new TableReferenceContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_tableReference);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(86); tablePrimary();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
 	public static class TablePrimaryContext extends ParserRuleContext {
-		public DerivedColumnListContext derivedColumnList() {
-			return getRuleContext(DerivedColumnListContext.class,0);
+		public TableNameContext tableName() {
+			return getRuleContext(TableNameContext.class,0);
 		}
-		public List<TerminalNode> TABLENAME() { return getTokens(SELECTParser.TABLENAME); }
-		public TerminalNode TABLENAME(int i) {
-			return getToken(SELECTParser.TABLENAME, i);
+		public TablePrimaryAsContext tablePrimaryAs() {
+			return getRuleContext(TablePrimaryAsContext.class,0);
 		}
 		public TablePrimaryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -540,35 +468,70 @@ public class SELECTParser extends Parser {
 
 	public final TablePrimaryContext tablePrimary() throws RecognitionException {
 		TablePrimaryContext _localctx = new TablePrimaryContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_tablePrimary);
+		enterRule(_localctx, 16, RULE_tablePrimary);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(88); match(TABLENAME);
-			setState(99);
+			setState(86); tableName();
+			setState(89);
 			_la = _input.LA(1);
-			if (_la==1 || _la==TABLENAME) {
+			if (_la==1) {
 				{
-				setState(90);
-				_la = _input.LA(1);
-				if (_la==1) {
-					{
-					setState(89); match(1);
-					}
+				setState(87); match(1);
+				setState(88); tablePrimaryAs();
 				}
+			}
 
-				setState(92); match(TABLENAME);
-				setState(97);
-				_la = _input.LA(1);
-				if (_la==11) {
-					{
-					setState(93); match(11);
-					setState(94); derivedColumnList();
-					setState(95); match(6);
-					}
-				}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
 
+	public static class TablePrimaryAsContext extends ParserRuleContext {
+		public DerivedColumnListContext derivedColumnList() {
+			return getRuleContext(DerivedColumnListContext.class,0);
+		}
+		public TableNameContext tableName() {
+			return getRuleContext(TableNameContext.class,0);
+		}
+		public TablePrimaryAsContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_tablePrimaryAs; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterTablePrimaryAs(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitTablePrimaryAs(this);
+		}
+	}
+
+	public final TablePrimaryAsContext tablePrimaryAs() throws RecognitionException {
+		TablePrimaryAsContext _localctx = new TablePrimaryAsContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_tablePrimaryAs);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(91); tableName();
+			setState(96);
+			_la = _input.LA(1);
+			if (_la==11) {
+				{
+				setState(92); match(11);
+				setState(93); derivedColumnList();
+				setState(94); match(6);
 				}
 			}
 
@@ -586,10 +549,12 @@ public class SELECTParser extends Parser {
 	}
 
 	public static class DerivedColumnListContext extends ParserRuleContext {
-		public TerminalNode COLUMNNAME(int i) {
-			return getToken(SELECTParser.COLUMNNAME, i);
+		public ColumnNameContext columnName(int i) {
+			return getRuleContext(ColumnNameContext.class,i);
 		}
-		public List<TerminalNode> COLUMNNAME() { return getTokens(SELECTParser.COLUMNNAME); }
+		public List<ColumnNameContext> columnName() {
+			return getRuleContexts(ColumnNameContext.class);
+		}
 		public DerivedColumnListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -606,33 +571,26 @@ public class SELECTParser extends Parser {
 
 	public final DerivedColumnListContext derivedColumnList() throws RecognitionException {
 		DerivedColumnListContext _localctx = new DerivedColumnListContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_derivedColumnList);
+		enterRule(_localctx, 20, RULE_derivedColumnList);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(101); match(COLUMNNAME);
-			setState(108);
+			setState(98); columnName();
+			setState(103);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==7) {
+			while (_la==7) {
 				{
-				setState(104); 
+				{
+				setState(99); match(7);
+				setState(100); columnName();
+				}
+				}
+				setState(105);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				do {
-					{
-					{
-					setState(102); match(7);
-					setState(103); match(COLUMNNAME);
-					}
-					}
-					setState(106); 
-					_errHandler.sync(this);
-					_la = _input.LA(1);
-				} while ( _la==7 );
-				}
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -666,12 +624,12 @@ public class SELECTParser extends Parser {
 
 	public final WhereClauseContext whereClause() throws RecognitionException {
 		WhereClauseContext _localctx = new WhereClauseContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_whereClause);
+		enterRule(_localctx, 22, RULE_whereClause);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110); match(10);
-			setState(111); searchCondition();
+			setState(106); match(10);
+			setState(107); searchCondition();
 			}
 		}
 		catch (RecognitionException re) {
@@ -705,11 +663,11 @@ public class SELECTParser extends Parser {
 
 	public final SearchConditionContext searchCondition() throws RecognitionException {
 		SearchConditionContext _localctx = new SearchConditionContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_searchCondition);
+		enterRule(_localctx, 24, RULE_searchCondition);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(113); booleanValueExpression(0);
+			setState(109); booleanValueExpression(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -752,19 +710,19 @@ public class SELECTParser extends Parser {
 		int _parentState = getState();
 		BooleanValueExpressionContext _localctx = new BooleanValueExpressionContext(_ctx, _parentState, _p);
 		BooleanValueExpressionContext _prevctx = _localctx;
-		int _startState = 28;
+		int _startState = 26;
 		enterRecursionRule(_localctx, RULE_booleanValueExpression);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(116); booleanTerm(0);
+			setState(112); booleanTerm(0);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(123);
+			setState(119);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -773,16 +731,16 @@ public class SELECTParser extends Parser {
 					{
 					_localctx = new BooleanValueExpressionContext(_parentctx, _parentState, _p);
 					pushNewRecursionContext(_localctx, _startState, RULE_booleanValueExpression);
-					setState(118);
+					setState(114);
 					if (!(1 >= _localctx._p)) throw new FailedPredicateException(this, "1 >= $_p");
-					setState(119); match(8);
-					setState(120); booleanTerm(0);
+					setState(115); match(8);
+					setState(116); booleanTerm(0);
 					}
 					} 
 				}
-				setState(125);
+				setState(121);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			}
 			}
 		}
@@ -826,19 +784,19 @@ public class SELECTParser extends Parser {
 		int _parentState = getState();
 		BooleanTermContext _localctx = new BooleanTermContext(_ctx, _parentState, _p);
 		BooleanTermContext _prevctx = _localctx;
-		int _startState = 30;
+		int _startState = 28;
 		enterRecursionRule(_localctx, RULE_booleanTerm);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(127); booleanFactor();
+			setState(123); booleanFactor();
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(134);
+			setState(130);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -847,16 +805,16 @@ public class SELECTParser extends Parser {
 					{
 					_localctx = new BooleanTermContext(_parentctx, _parentState, _p);
 					pushNewRecursionContext(_localctx, _startState, RULE_booleanTerm);
-					setState(129);
+					setState(125);
 					if (!(1 >= _localctx._p)) throw new FailedPredicateException(this, "1 >= $_p");
-					setState(130); match(3);
-					setState(131); booleanFactor();
+					setState(126); match(3);
+					setState(127); booleanFactor();
 					}
 					} 
 				}
-				setState(136);
+				setState(132);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			}
 			}
 		}
@@ -891,20 +849,20 @@ public class SELECTParser extends Parser {
 
 	public final BooleanFactorContext booleanFactor() throws RecognitionException {
 		BooleanFactorContext _localctx = new BooleanFactorContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_booleanFactor);
+		enterRule(_localctx, 30, RULE_booleanFactor);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(138);
+			setState(134);
 			_la = _input.LA(1);
 			if (_la==15) {
 				{
-				setState(137); match(15);
+				setState(133); match(15);
 				}
 			}
 
-			setState(140); booleanTest();
+			setState(136); booleanTest();
 			}
 		}
 		catch (RecognitionException re) {
@@ -941,26 +899,26 @@ public class SELECTParser extends Parser {
 
 	public final BooleanTestContext booleanTest() throws RecognitionException {
 		BooleanTestContext _localctx = new BooleanTestContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_booleanTest);
+		enterRule(_localctx, 32, RULE_booleanTest);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(142); booleanPrimary();
-			setState(148);
-			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
+			setState(138); booleanPrimary();
+			setState(144);
+			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				{
-				setState(143); match(4);
-				setState(145);
+				setState(139); match(4);
+				setState(141);
 				_la = _input.LA(1);
 				if (_la==15) {
 					{
-					setState(144); match(15);
+					setState(140); match(15);
 					}
 				}
 
-				setState(147); truthValue();
+				setState(143); truthValue();
 				}
 				break;
 			}
@@ -994,12 +952,12 @@ public class SELECTParser extends Parser {
 
 	public final TruthValueContext truthValue() throws RecognitionException {
 		TruthValueContext _localctx = new TruthValueContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_truthValue);
+		enterRule(_localctx, 34, RULE_truthValue);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(150);
+			setState(146);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 13) | (1L << 14) | (1L << 17))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1038,11 +996,11 @@ public class SELECTParser extends Parser {
 
 	public final BooleanPrimaryContext booleanPrimary() throws RecognitionException {
 		BooleanPrimaryContext _localctx = new BooleanPrimaryContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_booleanPrimary);
+		enterRule(_localctx, 36, RULE_booleanPrimary);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(152); booleanPredicand();
+			setState(148); booleanPredicand();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1076,11 +1034,11 @@ public class SELECTParser extends Parser {
 
 	public final BooleanPredicandContext booleanPredicand() throws RecognitionException {
 		BooleanPredicandContext _localctx = new BooleanPredicandContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_booleanPredicand);
+		enterRule(_localctx, 38, RULE_booleanPredicand);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(154); parenthizedBooleanValueExpression();
+			setState(150); parenthizedBooleanValueExpression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1114,13 +1072,85 @@ public class SELECTParser extends Parser {
 
 	public final ParenthizedBooleanValueExpressionContext parenthizedBooleanValueExpression() throws RecognitionException {
 		ParenthizedBooleanValueExpressionContext _localctx = new ParenthizedBooleanValueExpressionContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_parenthizedBooleanValueExpression);
+		enterRule(_localctx, 40, RULE_parenthizedBooleanValueExpression);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(156); match(11);
-			setState(157); booleanValueExpression(0);
-			setState(158); match(6);
+			setState(152); match(11);
+			setState(153); booleanValueExpression(0);
+			setState(154); match(6);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ColumnNameContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(SELECTParser.ID, 0); }
+		public ColumnNameContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_columnName; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterColumnName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitColumnName(this);
+		}
+	}
+
+	public final ColumnNameContext columnName() throws RecognitionException {
+		ColumnNameContext _localctx = new ColumnNameContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_columnName);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(156); match(ID);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TableNameContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(SELECTParser.ID, 0); }
+		public TableNameContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_tableName; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterTableName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitTableName(this);
+		}
+	}
+
+	public final TableNameContext tableName() throws RecognitionException {
+		TableNameContext _localctx = new TableNameContext(_ctx, getState());
+		enterRule(_localctx, 44, RULE_tableName);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(158); match(ID);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1136,9 +1166,9 @@ public class SELECTParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 14: return booleanValueExpression_sempred((BooleanValueExpressionContext)_localctx, predIndex);
+		case 13: return booleanValueExpression_sempred((BooleanValueExpressionContext)_localctx, predIndex);
 
-		case 15: return booleanTerm_sempred((BooleanTermContext)_localctx, predIndex);
+		case 14: return booleanTerm_sempred((BooleanTermContext)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -1156,49 +1186,49 @@ public class SELECTParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\27\u00a3\4\2\t\2"+
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\25\u00a3\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
-		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\3\2\3\2\3\2\3\3\5\3"+
-		"\63\n\3\3\3\3\3\3\3\3\4\3\4\3\5\3\5\3\5\3\5\7\5>\n\5\f\5\16\5A\13\5\5"+
-		"\5C\n\5\3\6\3\6\5\6G\n\6\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\n\3\n\3\n\7"+
-		"\nT\n\n\f\n\16\nW\13\n\3\13\3\13\3\f\3\f\5\f]\n\f\3\f\3\f\3\f\3\f\3\f"+
-		"\5\fd\n\f\5\ff\n\f\3\r\3\r\3\r\6\rk\n\r\r\r\16\rl\5\ro\n\r\3\16\3\16\3"+
-		"\16\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20\7\20|\n\20\f\20\16\20\177"+
-		"\13\20\3\21\3\21\3\21\3\21\3\21\3\21\7\21\u0087\n\21\f\21\16\21\u008a"+
-		"\13\21\3\22\5\22\u008d\n\22\3\22\3\22\3\23\3\23\3\23\5\23\u0094\n\23\3"+
-		"\23\5\23\u0097\n\23\3\24\3\24\3\25\3\25\3\26\3\26\3\27\3\27\3\27\3\27"+
-		"\3\27\2\30\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,\2\4\4\2\4\4"+
-		"\7\7\4\2\17\20\23\23\u009b\2.\3\2\2\2\4\62\3\2\2\2\6\67\3\2\2\2\bB\3\2"+
-		"\2\2\nD\3\2\2\2\fH\3\2\2\2\16K\3\2\2\2\20M\3\2\2\2\22P\3\2\2\2\24X\3\2"+
-		"\2\2\26Z\3\2\2\2\30g\3\2\2\2\32p\3\2\2\2\34s\3\2\2\2\36u\3\2\2\2 \u0080"+
-		"\3\2\2\2\"\u008c\3\2\2\2$\u0090\3\2\2\2&\u0098\3\2\2\2(\u009a\3\2\2\2"+
-		"*\u009c\3\2\2\2,\u009e\3\2\2\2./\7\22\2\2/\60\5\4\3\2\60\3\3\2\2\2\61"+
-		"\63\5\6\4\2\62\61\3\2\2\2\62\63\3\2\2\2\63\64\3\2\2\2\64\65\5\b\5\2\65"+
-		"\66\5\16\b\2\66\5\3\2\2\2\678\t\2\2\28\7\3\2\2\29C\7\13\2\2:?\5\n\6\2"+
-		";<\7\t\2\2<>\5\n\6\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@C\3\2\2\2"+
-		"A?\3\2\2\2B9\3\2\2\2B:\3\2\2\2C\t\3\2\2\2DF\7\24\2\2EG\5\f\7\2FE\3\2\2"+
-		"\2FG\3\2\2\2G\13\3\2\2\2HI\7\3\2\2IJ\7\24\2\2J\r\3\2\2\2KL\5\20\t\2L\17"+
-		"\3\2\2\2MN\7\16\2\2NO\5\22\n\2O\21\3\2\2\2PU\5\24\13\2QR\7\t\2\2RT\5\24"+
-		"\13\2SQ\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2V\23\3\2\2\2WU\3\2\2\2XY"+
-		"\5\26\f\2Y\25\3\2\2\2Ze\7\25\2\2[]\7\3\2\2\\[\3\2\2\2\\]\3\2\2\2]^\3\2"+
-		"\2\2^c\7\25\2\2_`\7\r\2\2`a\5\30\r\2ab\7\b\2\2bd\3\2\2\2c_\3\2\2\2cd\3"+
-		"\2\2\2df\3\2\2\2e\\\3\2\2\2ef\3\2\2\2f\27\3\2\2\2gn\7\24\2\2hi\7\t\2\2"+
-		"ik\7\24\2\2jh\3\2\2\2kl\3\2\2\2lj\3\2\2\2lm\3\2\2\2mo\3\2\2\2nj\3\2\2"+
-		"\2no\3\2\2\2o\31\3\2\2\2pq\7\f\2\2qr\5\34\17\2r\33\3\2\2\2st\5\36\20\2"+
-		"t\35\3\2\2\2uv\b\20\1\2vw\5 \21\2w}\3\2\2\2xy\6\20\2\3yz\7\n\2\2z|\5 "+
-		"\21\2{x\3\2\2\2|\177\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\37\3\2\2\2\177}\3\2"+
-		"\2\2\u0080\u0081\b\21\1\2\u0081\u0082\5\"\22\2\u0082\u0088\3\2\2\2\u0083"+
-		"\u0084\6\21\3\3\u0084\u0085\7\5\2\2\u0085\u0087\5\"\22\2\u0086\u0083\3"+
-		"\2\2\2\u0087\u008a\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0089\3\2\2\2\u0089"+
-		"!\3\2\2\2\u008a\u0088\3\2\2\2\u008b\u008d\7\21\2\2\u008c\u008b\3\2\2\2"+
-		"\u008c\u008d\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u008f\5$\23\2\u008f#\3"+
-		"\2\2\2\u0090\u0096\5(\25\2\u0091\u0093\7\6\2\2\u0092\u0094\7\21\2\2\u0093"+
-		"\u0092\3\2\2\2\u0093\u0094\3\2\2\2\u0094\u0095\3\2\2\2\u0095\u0097\5&"+
-		"\24\2\u0096\u0091\3\2\2\2\u0096\u0097\3\2\2\2\u0097%\3\2\2\2\u0098\u0099"+
-		"\t\3\2\2\u0099\'\3\2\2\2\u009a\u009b\5*\26\2\u009b)\3\2\2\2\u009c\u009d"+
-		"\5,\27\2\u009d+\3\2\2\2\u009e\u009f\7\r\2\2\u009f\u00a0\5\36\20\2\u00a0"+
-		"\u00a1\7\b\2\2\u00a1-\3\2\2\2\21\62?BFU\\celn}\u0088\u008c\u0093\u0096";
+		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\3\2\3\2\3"+
+		"\2\3\3\5\3\65\n\3\3\3\3\3\3\3\3\4\3\4\3\5\3\5\3\5\3\5\7\5@\n\5\f\5\16"+
+		"\5C\13\5\5\5E\n\5\3\6\3\6\5\6I\n\6\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\t"+
+		"\7\tT\n\t\f\t\16\tW\13\t\3\n\3\n\3\n\5\n\\\n\n\3\13\3\13\3\13\3\13\3\13"+
+		"\5\13c\n\13\3\f\3\f\3\f\7\fh\n\f\f\f\16\fk\13\f\3\r\3\r\3\r\3\16\3\16"+
+		"\3\17\3\17\3\17\3\17\3\17\3\17\7\17x\n\17\f\17\16\17{\13\17\3\20\3\20"+
+		"\3\20\3\20\3\20\3\20\7\20\u0083\n\20\f\20\16\20\u0086\13\20\3\21\5\21"+
+		"\u0089\n\21\3\21\3\21\3\22\3\22\3\22\5\22\u0090\n\22\3\22\5\22\u0093\n"+
+		"\22\3\23\3\23\3\24\3\24\3\25\3\25\3\26\3\26\3\26\3\26\3\27\3\27\3\30\3"+
+		"\30\3\30\2\31\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\2\4\4\2"+
+		"\4\4\7\7\4\2\17\20\23\23\u0098\2\60\3\2\2\2\4\64\3\2\2\2\69\3\2\2\2\b"+
+		"D\3\2\2\2\nF\3\2\2\2\fJ\3\2\2\2\16M\3\2\2\2\20O\3\2\2\2\22X\3\2\2\2\24"+
+		"]\3\2\2\2\26d\3\2\2\2\30l\3\2\2\2\32o\3\2\2\2\34q\3\2\2\2\36|\3\2\2\2"+
+		" \u0088\3\2\2\2\"\u008c\3\2\2\2$\u0094\3\2\2\2&\u0096\3\2\2\2(\u0098\3"+
+		"\2\2\2*\u009a\3\2\2\2,\u009e\3\2\2\2.\u00a0\3\2\2\2\60\61\7\22\2\2\61"+
+		"\62\5\4\3\2\62\3\3\2\2\2\63\65\5\6\4\2\64\63\3\2\2\2\64\65\3\2\2\2\65"+
+		"\66\3\2\2\2\66\67\5\b\5\2\678\5\16\b\28\5\3\2\2\29:\t\2\2\2:\7\3\2\2\2"+
+		";E\7\13\2\2<A\5\n\6\2=>\7\t\2\2>@\5\n\6\2?=\3\2\2\2@C\3\2\2\2A?\3\2\2"+
+		"\2AB\3\2\2\2BE\3\2\2\2CA\3\2\2\2D;\3\2\2\2D<\3\2\2\2E\t\3\2\2\2FH\5,\27"+
+		"\2GI\5\f\7\2HG\3\2\2\2HI\3\2\2\2I\13\3\2\2\2JK\7\3\2\2KL\5,\27\2L\r\3"+
+		"\2\2\2MN\5\20\t\2N\17\3\2\2\2OP\7\16\2\2PU\5\22\n\2QR\7\t\2\2RT\5\22\n"+
+		"\2SQ\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2V\21\3\2\2\2WU\3\2\2\2X[\5."+
+		"\30\2YZ\7\3\2\2Z\\\5\24\13\2[Y\3\2\2\2[\\\3\2\2\2\\\23\3\2\2\2]b\5.\30"+
+		"\2^_\7\r\2\2_`\5\26\f\2`a\7\b\2\2ac\3\2\2\2b^\3\2\2\2bc\3\2\2\2c\25\3"+
+		"\2\2\2di\5,\27\2ef\7\t\2\2fh\5,\27\2ge\3\2\2\2hk\3\2\2\2ig\3\2\2\2ij\3"+
+		"\2\2\2j\27\3\2\2\2ki\3\2\2\2lm\7\f\2\2mn\5\32\16\2n\31\3\2\2\2op\5\34"+
+		"\17\2p\33\3\2\2\2qr\b\17\1\2rs\5\36\20\2sy\3\2\2\2tu\6\17\2\3uv\7\n\2"+
+		"\2vx\5\36\20\2wt\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z\35\3\2\2\2{y\3"+
+		"\2\2\2|}\b\20\1\2}~\5 \21\2~\u0084\3\2\2\2\177\u0080\6\20\3\3\u0080\u0081"+
+		"\7\5\2\2\u0081\u0083\5 \21\2\u0082\177\3\2\2\2\u0083\u0086\3\2\2\2\u0084"+
+		"\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085\37\3\2\2\2\u0086\u0084\3\2\2"+
+		"\2\u0087\u0089\7\21\2\2\u0088\u0087\3\2\2\2\u0088\u0089\3\2\2\2\u0089"+
+		"\u008a\3\2\2\2\u008a\u008b\5\"\22\2\u008b!\3\2\2\2\u008c\u0092\5&\24\2"+
+		"\u008d\u008f\7\6\2\2\u008e\u0090\7\21\2\2\u008f\u008e\3\2\2\2\u008f\u0090"+
+		"\3\2\2\2\u0090\u0091\3\2\2\2\u0091\u0093\5$\23\2\u0092\u008d\3\2\2\2\u0092"+
+		"\u0093\3\2\2\2\u0093#\3\2\2\2\u0094\u0095\t\3\2\2\u0095%\3\2\2\2\u0096"+
+		"\u0097\5(\25\2\u0097\'\3\2\2\2\u0098\u0099\5*\26\2\u0099)\3\2\2\2\u009a"+
+		"\u009b\7\r\2\2\u009b\u009c\5\34\17\2\u009c\u009d\7\b\2\2\u009d+\3\2\2"+
+		"\2\u009e\u009f\7\24\2\2\u009f-\3\2\2\2\u00a0\u00a1\7\24\2\2\u00a1/\3\2"+
+		"\2\2\17\64ADHU[biy\u0084\u0088\u008f\u0092";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
