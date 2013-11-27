@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import com.etk.parser.SELECTMain;
 
@@ -90,37 +91,89 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeInt(4);
 	}
 
-	private void sendRowDescriptionMessage(DataOutputStream dataOutputStream)
-			throws IOException {
+	private void sendRowDescription(DataOutputStream dataOutputStream, String[] columns) throws IOException{
+	
+		short fieldsNo = (short) columns.length;
+		LinkedList<byte[]> bNameList = new LinkedList<byte[]>();
+		int identificator = 0;
+		short identificatorAtr = 0;
+		int typeInd = 0;
+		short typeLen = -2;
+		int typeMod = -1;
+		short formatCode = 0;
+		
+		for (int i = 0; i < columns.length; i++){
+			
+			String name = columns[i];
+			byte[] bName = nullTerminateString(name);
+			bNameList.add(bName);
+		}
+		
+		int totalSize = 8;
+		
+		for(int i = 0; i < columns.length; i++){
+			
+			totalSize = totalSize + bNameList.get(i).length;
+		}
+		
+		totalSize = totalSize + 14*columns.length;
+		
+		
 		dataOutputStream.writeByte('T');
-		dataOutputStream.writeInt(27);
-		dataOutputStream.writeShort(1);
-		dataOutputStream.writeBytes("id");
-		dataOutputStream.writeInt(32780);
-		dataOutputStream.writeShort(3);
-		dataOutputStream.writeInt(20);
-		dataOutputStream.writeShort(8);
-		dataOutputStream.writeInt(-1);
-		dataOutputStream.writeShort(0);
-
+		dataOutputStream.writeInt(totalSize);
+		dataOutputStream.writeShort(fieldsNo);
+		
+		for(int i = 0; i < columns.length; i++){
+			
+			dataOutputStream.writeBytes(new String(bNameList.get(i)));
+			dataOutputStream.writeInt(identificator);
+			dataOutputStream.writeShort(identificatorAtr);
+			dataOutputStream.writeInt(typeInd);
+			dataOutputStream.writeShort(typeLen);
+			dataOutputStream.writeInt(typeMod);
+			dataOutputStream.writeShort(formatCode);
+			
+		}
+		
 	}
+	
+	private void sendDataRow(DataOutputStream dataOutputStream, String[] values) throws IOException{
+	
+		
+		int tLen = 0;
+		short num = (short) values.length;
+		LinkedList<Integer> lenColList = new LinkedList<Integer>();
+		LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
+		
+		
+		for(int i = 0; i < values.length; i ++){
+		
+		String val = values[i];
+		lenColList.add(nullTerminateString(val).length);
+		bvalList.add(nullTerminateString(val));
+		tLen = tLen + nullTerminateString(val).length;
+		}
+		
+		tLen = tLen + 6 + 4*values.length;
+		
+		dataOutputStream.writeByte('D');
+		dataOutputStream.writeInt(tLen);
+		dataOutputStream.writeShort(num);
+		
+		for(int i = 0; i < values.length; i ++){
+			
+			dataOutputStream.writeInt(lenColList.get(i));
+			dataOutputStream.writeBytes(new String(nullTerminateString(values[i])));
+		}
+	
+		
+		
+	}
+	
 
+	
 	/* Data row incorrect, needs to be finished */
 
-	private void sendDataRowMessage(DataOutputStream dataOutputStream) {
-		try {
-			dataOutputStream.writeByte('D');
-			// Problem with upper line, after that it brokes (tried with other
-			// types of write after it). Why? Problem of size?
-			// Tried wireshark, it sends ACK FIN
-			dataOutputStream.writeInt(11);
-			dataOutputStream.writeShort(1);
-			dataOutputStream.writeInt(1);
-			dataOutputStream.writeByte('1');
-		} catch (IOException ioe) {
-			System.out.println(ioe);
-		}
-	}
 
 	public void run() {
 
@@ -188,7 +241,10 @@ class SessionHandler implements Runnable {
 			 * dataOutputStream.flush();
 			 */
 
-			sendData(dataOutputStream);
+			String[] columns = {"name", "surname"};
+			sendRowDescription(dataOutputStream, columns);
+			String[] values = {"david", "riobo"};
+			sendDataRow(dataOutputStream, values);
 			dataOutputStream.flush();
 
 			sendCommandCompleteMessage(dataOutputStream);
