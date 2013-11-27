@@ -14,10 +14,12 @@ public class Table {
     private String tableName; //mapping how?
     Map<String,Attribute> attributes;
     private String entityUri;
+    private String entityLabel;
 
-    public Table(String name, String entityUri) {
+    public Table(String name, String entityUri, String entityLabel) {
         this.tableName = name;
         this.entityUri = entityUri;
+        this.entityLabel = entityLabel;
         this.attributes = new HashMap<String,Attribute>();
     }
 
@@ -35,5 +37,9 @@ public class Table {
 
     public String getEntityUri() {
         return entityUri;
+    }
+
+    public String getEntityLabel() {
+        return entityLabel;
     }
 }

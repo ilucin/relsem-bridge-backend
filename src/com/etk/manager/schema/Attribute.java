@@ -12,6 +12,9 @@ public class Attribute {
     private Type type;
     private boolean notnull;
     private String defaultVal;
+    private int length;
+
+
 
     public void setNotnull(boolean notnull) {
         this.notnull = notnull;
@@ -39,6 +42,15 @@ public class Attribute {
 
     public Type getType() {
         return type;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getLength() {
+
+        return length;
     }
 
     public void setUri(String uri) {
@@ -74,6 +86,10 @@ public class Attribute {
         }
         public Builder setUri(String uri) {
             this.instance.setUri(uri);
+            return this;
+        }
+        public Builder setLength(int length) {
+            this.instance.setLength(length);
             return this;
         }
         public Builder setType(String type) {
