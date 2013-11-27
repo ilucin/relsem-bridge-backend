@@ -1,6 +1,4 @@
-package com.etk.parser;
-
-// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
+package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -25,19 +23,6 @@ public class SELECTBaseListener implements SELECTListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitWhereClause(@NotNull SELECTParser.WhereClauseContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterTableReference(@NotNull SELECTParser.TableReferenceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitTableReference(@NotNull SELECTParser.TableReferenceContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -174,19 +159,6 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -194,6 +166,19 @@ public class SELECTBaseListener implements SELECTListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -226,6 +211,19 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterTableName(@NotNull SELECTParser.TableNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitTableName(@NotNull SELECTParser.TableNameContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterParenthizedBooleanValueExpression(@NotNull SELECTParser.ParenthizedBooleanValueExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -246,6 +244,19 @@ public class SELECTBaseListener implements SELECTListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSearchCondition(@NotNull SELECTParser.SearchConditionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
