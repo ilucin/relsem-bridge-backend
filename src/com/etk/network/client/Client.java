@@ -1,7 +1,6 @@
 package com.etk.network.client;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,11 +20,11 @@ public class Client {
 
 		// connect to the database
 		conn = connectToDatabaseOrDie();
-        System.out.println("Connected!");
-        
-        // get data
+		System.out.println("Connected!");
+
+		// get data
 		query(conn, list);
-		
+
 		System.out.println("QuerySent!");
 		// print results
 		printAll(list);
@@ -42,36 +41,34 @@ public class Client {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st
-					.executeQuery("SELECT id FROM student.student");
+			ResultSet rs = st.executeQuery("SELECT id FROM student.student");
 			while (rs.next()) {
 				String name = rs.getString("name");
-                System.out.println(name);
-                String surname = rs.getString("surname");
-                System.out.println(surname);
-               // Date date = rs.getDate("date");
-                //System.out.println(date.toString());
-             
-                
-            }
+				System.out.println(name);
+				String surname = rs.getString("surname");
+				System.out.println(surname);
+				// Date date = rs.getDate("date");
+				// System.out.println(date.toString());
+
+			}
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
 			System.err.println("Threw a SQLException.");
-            System.err.println(se.getMessage());
-            se.printStackTrace();
-        }
+			System.err.println(se.getMessage());
+			se.printStackTrace();
+		}
 	}
 
 	private Connection connectToDatabaseOrDie() {
 		Connection conn = null;
 		try {
 			Class.forName("org.postgresql.Driver");
-			String host = "127.0.0.1";
-            String database = "Test";
-            String username = "postgres";
-            String password = "postgres";
-            String url = "jdbc:postgresql://localhost:5000/dbname";
+			String host = "localhost";
+			String databaseName = "dbname";
+			String username = "postgres";
+			String password = "postgres";
+			String url = "jdbc:postgresql://" + host + ":5000/" + databaseName;
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
 			System.err.println("I have not found the PostgreSQL driver class");
