@@ -25,7 +25,29 @@ public class Sender {
 		}
 
 	}
+	
+	/**
+	 * send an error message to the client
+	 * 
+	 * @param error
+	 *            the error to report to the client
+	 */
+	public void sendErrorResponse(String error) {
+		try {
+			this.dataOutputStream_.writeByte('E');
+			byte[] temp = this.nullTerminateString(error);
+			this.dataOutputStream_.writeInt(temp.length + 4 + 1);
+			// you can find all types of messages here:
+			// http://www.postgresql.org/docs/9.3/static/protocol-error-fields.html
+			this.dataOutputStream_.writeByte('S');
+			this.dataOutputStream_.write(temp);
+		} catch (IOException e) {
+			System.out.println("Error in sendErrorResponse: ");
+			e.printStackTrace();
+		}
 
+	}
+	
 	/**
 	 * 
 	 */
@@ -203,7 +225,8 @@ public class Sender {
 	/**
 	 * 
 	 * @param string
-	 * @return
+	 *            the string that needs to be null terminated
+	 * @return a array of bytes representing the string and the terminator
 	 */
 	private byte[] nullTerminateString(String string) {
 		byte[] in = string.getBytes();
@@ -216,7 +239,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Send the server version to the client
 	 */
 	public void sendServerVersionMessage() {
 		try {
@@ -241,7 +264,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Send a message to tell the client that the server is waiting for a query
 	 */
 	public void sendReadyForQueryMessage() {
 		try {
