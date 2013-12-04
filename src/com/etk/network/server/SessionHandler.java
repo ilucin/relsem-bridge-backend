@@ -42,10 +42,10 @@ class SessionHandler implements Runnable {
 			byte[] authParamsB = new byte[msgLen - 8]; // msglen - version and
 														// len
 			dataInputStream.read(authParamsB);
-			// String authParams = msgParser.parseMsg(authParamsB);
+			String authParams = msgParser.parseMsg(authParamsB);
 
 			System.out.println("Client connected!");
-			// System.out.println("Msg len: " + msgLen);
+			System.out.println("Msg len: " + msgLen);
 			System.out.println("Protocol: V" + protocolMajorVersion + "."
 					+ protocolMinorVersion);
 
@@ -59,10 +59,16 @@ class SessionHandler implements Runnable {
 			// if (dataInputStream.available() > 0) {
 			byte type = dataInputStream.readByte();
 			int msgLength = dataInputStream.readInt();
+			// remove the terminator of the first empty string
+			dataInputStream.readByte();
 			System.out.println("Message Type: " + (char) type);
 			System.out.println("Lenght: " + msgLength);
-
-			byte[] buf = new byte[dataInputStream.available() - 4];
+			
+			// - 4 for the message lenght, - 1 for the terminator of the first
+			// string
+			// - 1 for the terminator of the first string, - 2 for the number of
+			// parameter
+			byte[] buf = new byte[msgLength - 4 - 1 - 1 - 2];
 			dataInputStream.read(buf);
 			String inputString = msgParser.parseMsg(buf);
 			System.out.println(inputString);
