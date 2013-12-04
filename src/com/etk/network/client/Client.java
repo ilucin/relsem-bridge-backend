@@ -1,5 +1,8 @@
 package com.etk.network.client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Client {
+
+	private InputStreamReader isr_ = new InputStreamReader(System.in);
+	private BufferedReader br_ = new BufferedReader(isr_);
 
 	public static void main(String[] args) {
 		new Client();
@@ -21,13 +27,46 @@ public class Client {
 		// connect to the database
 		conn = connectToDatabaseOrDie();
 		System.out.println("Connected!");
+		boolean exit = false;
 
-		// get data
-		query(conn, list);
+		while (!exit) {
+			System.out.println("Choose option:");
+			System.out.println("1-Enter query");
+			System.out.println("2-Quit");
+			int option = 0;
+			try {
+				option = Integer.parseInt(br_.readLine());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			switch (option) {
+			case 1:
 
-		System.out.println("QuerySent!");
-		// print results
-		printAll(list);
+				System.out.println("Write the query: ");
+				String query = null;
+				try {
+					query = br_.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// get data
+				query(conn, list, query);
+
+				System.out.println("QuerySent!");
+				// print results
+				printAll(list);
+				break;
+			case 2:
+				exit = true;
+				break;
+			default:
+				System.out.println("Invalid option");
+				break;
+			}
+		}
 	}
 
 	private void printAll(ArrayList<Student> list) {
@@ -37,7 +76,7 @@ public class Client {
 		}
 	}
 
-	private void query(Connection conn, ArrayList<Student> list) {
+	private void query(Connection conn, ArrayList<Student> list, String query) {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
