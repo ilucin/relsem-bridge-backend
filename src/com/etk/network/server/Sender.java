@@ -355,10 +355,9 @@ public class Sender {
 	public void sendCommandCompleteMessage() {
 		try {
 			this.dataOutputStream_.writeByte('C');
-			String tmp = "SELECT 1";
-			this.dataOutputStream_.writeInt(4 + tmp.getBytes().length);
-
-			this.dataOutputStream_.write(tmp.getBytes());
+			byte[] tmp = this.nullTerminateString("SELECT 1");
+			this.dataOutputStream_.writeInt(4 + tmp.length);
+			this.dataOutputStream_.write(tmp);
 		} catch (IOException e) {
 			System.out.println("Error in sendCommandCompleteMessage: ");
 			e.printStackTrace();
