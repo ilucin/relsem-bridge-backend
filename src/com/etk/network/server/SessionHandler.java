@@ -1,12 +1,17 @@
 package com.etk.network.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import com.etk.parser.SelectObject;
+import com.etk.parser.SelectQueryToObject;
 
 class SessionHandler implements Runnable {
 	private Socket server_;
@@ -63,9 +68,19 @@ class SessionHandler implements Runnable {
 			dataInputStream.read(buf);
 			String inputString = msgParser.parseMsg(buf);
 			System.out.println(inputString);
+			InputStream is = new ByteArrayInputStream(
+					inputString.getBytes("UTF-8"));
+			SelectQueryToObject transform = new SelectQueryToObject(is);
+			SelectObject selectObject = transform.getSelectObject();
+
+			System.out.println("Parser found tables: "
+					+ selectObject.getTableNames().toString()
+					+ "\nParser found columns: "
+					+ selectObject.getColumnNames().toString());
 			// InputStream is = new
 			// ByteArrayInputStream(inputString.getBytes("UTF-8"));
 			// SELECTMain.parse(is);
+			
 
 			/*
 			 * this is in case the server receive an empty query string and
