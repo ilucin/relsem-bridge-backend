@@ -1,6 +1,7 @@
 package com.etk.network.client;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,8 +45,14 @@ public class Client {
 			ResultSet rs = st
 					.executeQuery("SELECT id FROM student.student");
 			while (rs.next()) {
-				int id = rs.getInt("id");
-                System.out.println(id);
+				String name = rs.getString("name");
+                System.out.println(name);
+                String surname = rs.getString("surname");
+                System.out.println(surname);
+               // Date date = rs.getDate("date");
+                //System.out.println(date.toString());
+             
+                
             }
 			rs.close();
 			st.close();
