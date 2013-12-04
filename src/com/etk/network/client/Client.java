@@ -34,12 +34,12 @@ public class Client {
 			System.out.println("1-Enter query");
 			System.out.println("2-Quit");
 			int option = 0;
+
 			try {
 				option = Integer.parseInt(br_.readLine());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (NumberFormatException | IOException e1) {
 			}
+
 			switch (option) {
 			case 1:
 
@@ -48,7 +48,6 @@ public class Client {
 				try {
 					query = br_.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -114,6 +113,7 @@ public class Client {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (SQLException e) {
+			System.out.println("Cannot establish a connection!");
 			e.printStackTrace();
 			System.exit(2);
 		}

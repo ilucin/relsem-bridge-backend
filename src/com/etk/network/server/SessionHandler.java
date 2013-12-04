@@ -27,8 +27,6 @@ class SessionHandler implements Runnable {
 		}
 	}
 
-	/* Data row incorrect, needs to be finished */
-
 	public void run() {
 
 		try {
@@ -80,7 +78,6 @@ class SessionHandler implements Runnable {
 			// InputStream is = new
 			// ByteArrayInputStream(inputString.getBytes("UTF-8"));
 			// SELECTMain.parse(is);
-			
 
 			/*
 			 * this is in case the server receive an empty query string and
