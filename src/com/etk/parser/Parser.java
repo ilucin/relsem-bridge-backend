@@ -6,6 +6,13 @@ public interface Parser {
 	 * javadocs to understand what methods do and what paremeters are used to.
 	 * For instance:
 	 */
+	
+	/*We need 3 methods here:
+		Access to selectObject.getColumnNames()
+		Check correctness
+		Access to the errors if the column names are wrong or if the query is bad*/
+		
+	
 	/**
 	 * this method do this, this, and this
 	 * 

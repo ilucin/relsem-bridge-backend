@@ -3,6 +3,7 @@ package com.etk.network.server;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Sender {
 
@@ -366,22 +367,22 @@ public class Sender {
 
 	/**
 	 * 
-	 * @param values
+	 * @param list
 	 */
-	public void sendDataRow(String[] values) {
+	public void sendDataRow(List<String> list) {
 		try {
 			// 4 bytes to communicate the lenght of the message + 2 bytes for
 			// the
 			// column numbers = 6
 			int tLen = 6;
-			short num = (short) values.length;
+			short num = (short) list.size();
 			LinkedList<Integer> lenColList = new LinkedList<Integer>();
 			LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
 			byte[] val;
 
 			// Sum the length of the column value
-			for (int i = 0; i < values.length; i++) {
-				val = nullTerminateString(values[i]);
+			for (int i = 0; i < list.size(); i++) {
+				val = nullTerminateString(list.get(i));
 				lenColList.add(val.length);
 				bvalList.add(val);
 				// lenght of the value + 4 bytes to communicate the value lenght
@@ -394,11 +395,11 @@ public class Sender {
 
 			// for each value, send 4 bytes for the value lenght and n bytes for
 			// the value itself
-			for (int i = 0; i < values.length; i++) {
+			for (int i = 0; i < list.size(); i++) {
 				this.dataOutputStream_.writeInt(lenColList.get(i));
 
 				this.dataOutputStream_.writeBytes(new String(
-						nullTerminateString(values[i])));
+						nullTerminateString(list.get(i))));
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");

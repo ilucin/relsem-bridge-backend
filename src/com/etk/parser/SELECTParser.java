@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.List;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class SELECTParser extends Parser {
+public class SELECTParser extends Parser{
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
