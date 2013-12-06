@@ -92,9 +92,11 @@ public class Client {
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
-			System.err.println("Threw a SQLException.");
+			// System.err.println("Threw a SQLException.");
+			// System.err.println(se.getErrorCode());
+			System.err.println("An error occurred:");
 			System.err.println(se.getMessage());
-			se.printStackTrace();
+			//se.printStackTrace();
 		}
 	}
 
