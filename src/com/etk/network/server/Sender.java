@@ -42,6 +42,10 @@ public class Sender {
 			// http://www.postgresql.org/docs/9.3/static/protocol-error-fields.html
 			this.dataOutputStream_.writeByte('S');
 			this.dataOutputStream_.write(temp);
+			// an error message is always followed by a "ready for query"
+			// message. I put the call to this method here so we can manage the
+			// sendErrorResponse method "transparently"
+			this.sendReadyForQueryMessage();
 		} catch (IOException e) {
 			System.out.println("Error in sendErrorResponse: ");
 			e.printStackTrace();
