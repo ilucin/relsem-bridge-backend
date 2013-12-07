@@ -20,23 +20,21 @@ public class SelectQueryToObject extends SELECTBaseListener {
 
     private SelectObject selectObject;
 
-    public SelectQueryToObject(String[] args) throws Exception {
+    public SelectQueryToObject(InputStream parseString) throws Exception {
         selectObject = new SelectObject();
-        String inputFile = null;
-        if ( args.length>0 ) inputFile = args[0];
-        InputStream is = System.in;
-        if ( inputFile!=null ) {
-            is = new FileInputStream(inputFile);
-        }
-        ANTLRInputStream input = new ANTLRInputStream(is);
-        SELECTLexer lexer = new SELECTLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SELECTParser parser = new SELECTParser(tokens);
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.selectStmnt();
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(this, tree);
+
+        if ( parseString!= null ) {
+            ANTLRInputStream input = new ANTLRInputStream(parseString);
+            SELECTLexer lexer = new SELECTLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            SELECTParser parser = new SELECTParser(tokens);
+            parser.setBuildParseTree(true);
+            ParseTree tree = parser.selectStmnt();
+
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(this, tree);
+        }
 
     }
     public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
