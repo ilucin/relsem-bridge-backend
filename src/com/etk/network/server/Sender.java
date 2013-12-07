@@ -7,6 +7,9 @@ import java.util.List;
 
 public class Sender {
 
+	public static enum AuthEnum {
+		AuthOK, KerberosV5Required, ClearTextPasswordRequired, MD5EncryptedPasswordRequired
+	}
 	private DataOutputStream dataOutputStream_;
 
 	public Sender(DataOutputStream output) {
@@ -425,12 +428,34 @@ public class Sender {
 
 	/**
 	 * 
+	 * @param authMessage
 	 */
-	public void sendAuthenticationOkMessage() {
+	public void sendAuthenticationOkMessage(AuthEnum authMessage) {
 		try {
 			this.dataOutputStream_.writeByte('R');
-			this.dataOutputStream_.writeInt(8);
-			this.dataOutputStream_.writeInt(0);
+			switch (authMessage) {
+			case AuthOK:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(0);
+				break;
+			case KerberosV5Required:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(2);
+				break;
+			case ClearTextPasswordRequired:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(3);
+				break;
+			case MD5EncryptedPasswordRequired:
+				/*
+				 * needs to implement a salt for the password, we can use
+				 * something like: final Random r = new SecureRandom(); byte[]
+				 * salt = new byte[4]; r.nextBytes(salt); // String encodedSalt
+				 * = Base64.encodeBase64String(salt);
+				 */
+				throw new NotImplementedException();
+				break;
+			}
 		} catch (IOException e) {
 			System.out.println("Error in sendAuthenticationOkMessage: ");
 			e.printStackTrace();
