@@ -57,7 +57,7 @@ class SessionHandler implements Runnable {
 
 			// System.out.println("Auth params: " + authParams);
 
-			this.sender_.sendAuthenticationOkMessage();
+			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
 			this.sender_.sendServerVersionMessage();
 			this.sender_.sendReadyForQueryMessage();
 			this.sender_.flush();
