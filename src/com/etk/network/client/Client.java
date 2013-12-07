@@ -37,7 +37,7 @@ public class Client {
 
 			try {
 				option = Integer.parseInt(br_.readLine());
-			} catch (NumberFormatException | IOException e1) {
+			} catch (IOException e1) {
 			}
 
 			switch (option) {
@@ -79,7 +79,7 @@ public class Client {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st.executeQuery("SELECT id FROM student.student");
+			ResultSet rs = st.executeQuery("SELECT id, name, surname FROM student");
 			while (rs.next()) {
 				String name = rs.getString("name");
 				System.out.println(name);

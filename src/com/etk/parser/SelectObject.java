@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Time: 21:17
  * To change this template use File | Settings | File Templates.
  */
-public class SelectObject {
+public class SelectObject implements ParserInterface {
     ArrayList<String> columnNames;
     ArrayList<String> tableNames;
 
