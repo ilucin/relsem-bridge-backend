@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Sender {
 
@@ -454,7 +455,6 @@ public class Sender {
 				 * = Base64.encodeBase64String(salt);
 				 */
 				throw new NotImplementedException();
-				break;
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendAuthenticationOkMessage: ");
