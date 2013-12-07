@@ -43,7 +43,7 @@ public class RemoteSourceRDF implements DataSource{
 		*/
 		
 		//Add order by and sort by
-		queryString += " GROUP BY ?o ORDER BY ASC(?num)";
+		queryString += " GROUP BY ?o ORDER BY DESC(?num)";
 		
 		if( limit != 0 ){
 			queryString += " LIMIT " + Integer.toString( limit );
@@ -181,8 +181,9 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
-		}		
-		Query query = QueryFactory.create(queryString);
+		}
+        System.out.println(queryString);
+        Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
@@ -224,10 +225,10 @@ public class RemoteSourceRDF implements DataSource{
 	
 	private String repeateString(String s, int n){
 		String out = " ";
-		
-		for(int i = 0; i < n; i++){
-			out += s + i + " ";
-		}
+
+        for(int i = 0; i < n; i++){
+            out += s + i + " ";
+        }
 		
 		return out;
 	}
