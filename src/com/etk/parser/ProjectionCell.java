@@ -15,4 +15,13 @@ public class ProjectionCell {
         this.prefix = prefix;
         this.columnName = columnName;
     }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
 }
