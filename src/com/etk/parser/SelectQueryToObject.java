@@ -38,7 +38,14 @@ public class SelectQueryToObject extends SELECTBaseListener {
         }
 
     }
-    /*public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
+
+    @Override public void exitColumnInTable(@NotNull SELECTParser.ColumnInTableContext ctx) {
+        String tableName = ctx.tableName().getText();
+        String columnName = ctx.columnName().getText();
+        ProjectionCell projectionCell = new ProjectionCell(tableName, columnName);
+        selectObject.addPrefColNames(projectionCell);
+    }
+   /* public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
         selectObject.addFreeColumnName(ctx.columnName().getText());
     }
 
