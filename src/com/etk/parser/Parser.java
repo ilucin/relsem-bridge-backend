@@ -1,23 +1,34 @@
 package com.etk.parser;
 
 public interface Parser {
-	/*
-	 * Put definition of the methods we have to use here and please, put also
-	 * javadocs to understand what methods do and what paremeters are used to.
-	 * For instance:
-	 */
-	
-	/*We need 3 methods here:
-		Access to selectObject.getColumnNames()
-		Check correctness
-		Access to the errors if the column names are wrong or if the query is bad*/
-		
-	
 	/**
-	 * this method do this, this, and this
+	 * Check the validity of a query
 	 * 
-	 * @param b
-	 *            represent the integer to do this this and this
+	 * @param query
+	 *            The query to parse
+	 * @return True if and only if the query is correct, false otherwise
 	 */
-	public void foo(int b);
+	public boolean checkValidity(String query);
+
+	/**
+	 * Returns the arrayList of the names of the columns only if the query is
+	 * correct. Returns an empty arraylist if the query is incorrect.
+	 * 
+	 * @return The arrayList of the names of the columns, an empty string if the
+	 *         query is incorrect
+	 */
+	// TODO maybe is better to throw an exception in case the query is
+	// incorrect?
+	public ArrayList<String> getColumnsName();
+
+	/**
+	 * Is used to know which is the error of the parser in case of a bad query
+	 * 
+	 * @return The String with the error message
+	 * @throws Exception
+	 *             In case the query is correct and there is no error message to
+	 *             read
+	 */
+	//TODO define a more significant exception
+	public String getErrorMessage() throws Exception;
 }
