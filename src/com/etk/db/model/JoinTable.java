@@ -83,10 +83,6 @@ public class JoinTable implements RowCollection {
         return joinedAttributeIndices.keySet();
     }
 
-    @Override
-    public int getSize() {
-        return joints.size();
-    }
 
     @Override
     public Class getType(String attribute) {
