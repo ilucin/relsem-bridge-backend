@@ -1,5 +1,6 @@
 package com.etk.data;
 
+import com.etk.data.query.Properties;
 import com.etk.manager.schema.Attribute;
 import com.etk.manager.schema.Type;
 import com.etk.manager.schema.mappings.AttributeMapping;
@@ -16,9 +17,9 @@ import java.util.List;
  */
 public interface DataSource {
 
-    public List<Object> getEntityCandidates(int limit, int offset, boolean label);
-    public List<Object> getAttributes(String entity, int limit, int offset, boolean label);
+    public List<Object> getEntityCandidates(Properties queryProperties);
+    public List<Object> getAttributes(String entity, Properties queryProperties);
     public List<Class> getType(String entity, String attribute);
-    public List<Object> getValues(String entity, String attributes[], int limit, int offset);
+    public List<Object> getValues(String entity, String attributes[], Properties queryProperties);
     public List<String> getAvailableEndpoints();
 }
