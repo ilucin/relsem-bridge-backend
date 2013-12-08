@@ -1,0 +1,1 @@
+SELECT a FROM b , c INNER JOIN z USING (a, b, c)

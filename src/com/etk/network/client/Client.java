@@ -1,7 +1,9 @@
 package com.etk.network.client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Client {
+
+	private InputStreamReader isr_ = new InputStreamReader(System.in);
+	private BufferedReader br_ = new BufferedReader(isr_);
 
 	public static void main(String[] args) {
 		new Client();
@@ -21,14 +26,46 @@ public class Client {
 
 		// connect to the database
 		conn = connectToDatabaseOrDie();
-        System.out.println("Connected!");
-        
-        // get data
-		query(conn, list);
-		
-		System.out.println("QuerySent!");
-		// print results
-		printAll(list);
+		System.out.println("Connected!");
+		boolean exit = false;
+
+		while (!exit) {
+			System.out.println("Choose option:");
+			System.out.println("1-Enter query");
+			System.out.println("2-Quit");
+			int option = 0;
+
+			try {
+				option = Integer.parseInt(br_.readLine());
+			} catch (IOException e1) {
+			}
+
+			switch (option) {
+			case 1:
+
+				System.out.println("Write the query: ");
+				String query = null;
+				try {
+					query = br_.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				// get data
+				query(conn, list, query);
+
+				System.out.println("QuerySent!");
+				// print results
+				printAll(list);
+				break;
+			case 2:
+				exit = true;
+				break;
+			default:
+				System.out.println("Invalid option");
+				break;
+			}
+		}
 	}
 
 	private void printAll(ArrayList<Student> list) {
@@ -38,46 +75,45 @@ public class Client {
 		}
 	}
 
-	private void query(Connection conn, ArrayList<Student> list) {
+	private void query(Connection conn, ArrayList<Student> list, String query) {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st
-					.executeQuery("SELECT id FROM student.student");
+			ResultSet rs = st.executeQuery("SELECT a FROM b, c INNER JOIN z USING (a, b, c)");
 			while (rs.next()) {
 				String name = rs.getString("name");
-                System.out.println(name);
-                String surname = rs.getString("surname");
-                System.out.println(surname);
-               // Date date = rs.getDate("date");
-                //System.out.println(date.toString());
-             
-                
-            }
+				System.out.println(name);
+				String surname = rs.getString("surname");
+				System.out.println(surname);
+				// Date date = rs.getDate("date");
+				// System.out.println(date.toString());
+
+			}
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
 			System.err.println("Threw a SQLException.");
-            System.err.println(se.getMessage());
-            se.printStackTrace();
-        }
+			System.err.println(se.getMessage());
+			se.printStackTrace();
+		}
 	}
 
 	private Connection connectToDatabaseOrDie() {
 		Connection conn = null;
 		try {
 			Class.forName("org.postgresql.Driver");
-			String host = "127.0.0.1";
-            String database = "Test";
-            String username = "postgres";
-            String password = "postgres";
-            String url = "jdbc:postgresql://localhost:5000/dbname";
+			String host = "localhost";
+			String databaseName = "dbname";
+			String username = "postgres";
+			String password = "postgres";
+			String url = "jdbc:postgresql://" + host + ":5000/" + databaseName;
 			conn = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
 			System.err.println("I have not found the PostgreSQL driver class");
 			e.printStackTrace();
 			System.exit(1);
 		} catch (SQLException e) {
+			System.out.println("Cannot establish a connection!");
 			e.printStackTrace();
 			System.exit(2);
 		}

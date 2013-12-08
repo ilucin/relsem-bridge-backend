@@ -1,17 +1,10 @@
 package com.etk.network.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.LinkedList;
 
-import com.etk.parser.SELECTMain;
 import com.etk.parser.SelectObject;
 import com.etk.parser.SelectQueryToObject;
 
@@ -95,84 +88,37 @@ class SessionHandler implements Runnable {
 		dataOutputStream.writeInt(4);
 	}
 
-	private void sendRowDescription(DataOutputStream dataOutputStream,
-			String[] columns) throws IOException {
-
-		short fieldsNo = (short) columns.length;
-		LinkedList<byte[]> bNameList = new LinkedList<byte[]>();
-		int identificator = 0;
-		short identificatorAtr = 0;
-		int typeInd = 0;
-		short typeLen = -2;
-		int typeMod = -1;
-		short formatCode = 0;
-
-		for (int i = 0; i < columns.length; i++) {
-
-			String name = columns[i];
-			byte[] bName = nullTerminateString(name);
-			bNameList.add(bName);
-		}
-
-		int totalSize = 8;
-
-		for (int i = 0; i < columns.length; i++) {
-
-			totalSize = totalSize + bNameList.get(i).length;
-		}
-
-		totalSize = totalSize + 14 * columns.length;
-
-		dataOutputStream.writeByte('T');
-		dataOutputStream.writeInt(totalSize);
-		dataOutputStream.writeShort(fieldsNo);
-
-		for (int i = 0; i < columns.length; i++) {
-
-			dataOutputStream.writeBytes(new String(bNameList.get(i)));
-			dataOutputStream.writeInt(identificator);
-			dataOutputStream.writeShort(identificatorAtr);
-			dataOutputStream.writeInt(typeInd);
-			dataOutputStream.writeShort(typeLen);
-			dataOutputStream.writeInt(typeMod);
-			dataOutputStream.writeShort(formatCode);
-
-		}
-
-	}
-
-	private void sendDataRow(DataOutputStream dataOutputStream, String[] values)
+	private void sendRowDescriptionMessage(DataOutputStream dataOutputStream)
 			throws IOException {
-
-		int tLen = 0;
-		short num = (short) values.length;
-		LinkedList<Integer> lenColList = new LinkedList<Integer>();
-		LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
-
-		for (int i = 0; i < values.length; i++) {
-
-			String val = values[i];
-			lenColList.add(nullTerminateString(val).length);
-			bvalList.add(nullTerminateString(val));
-			tLen = tLen + nullTerminateString(val).length;
-		}
-
-		tLen = tLen + 6 + 4 * values.length;
-
-		dataOutputStream.writeByte('D');
-		dataOutputStream.writeInt(tLen);
-		dataOutputStream.writeShort(num);
-
-		for (int i = 0; i < values.length; i++) {
-
-			dataOutputStream.writeInt(lenColList.get(i));
-			dataOutputStream.writeBytes(new String(
-					nullTerminateString(values[i])));
-		}
+		dataOutputStream.writeByte('T');
+		dataOutputStream.writeInt(27);
+		dataOutputStream.writeShort(1);
+		dataOutputStream.writeBytes("id");
+		dataOutputStream.writeInt(32780);
+		dataOutputStream.writeShort(3);
+		dataOutputStream.writeInt(20);
+		dataOutputStream.writeShort(8);
+		dataOutputStream.writeInt(-1);
+		dataOutputStream.writeShort(0);
 
 	}
 
 	/* Data row incorrect, needs to be finished */
+
+	private void sendDataRowMessage(DataOutputStream dataOutputStream) {
+		try {
+			dataOutputStream.writeByte('D');
+			// Problem with upper line, after that it brokes (tried with other
+			// types of write after it). Why? Problem of size?
+			// Tried wireshark, it sends ACK FIN
+			dataOutputStream.writeInt(11);
+			dataOutputStream.writeShort(1);
+			dataOutputStream.writeInt(1);
+			dataOutputStream.writeByte('1');
+		} catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+	}
 
 	public void run() {
 
@@ -229,20 +175,23 @@ class SessionHandler implements Runnable {
 			dataInputStream.read(buf);
 			String inputString = msgParser.parseMsg(buf);
 			System.out.println(inputString);
+			InputStream is = new
+			    ByteArrayInputStream(inputString.getBytes("UTF-8"));
 
-			InputStream is = new ByteArrayInputStream(
-					inputString.getBytes("UTF-8"));
-			SelectQueryToObject transform = new SelectQueryToObject(is);
-			SelectObject selectObject = transform.getSelectObject();
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Actual parsing of query and creation of selectObject which contains the query data:
+            SelectQueryToObject selectQueryToObject = new SelectQueryToObject(is);
+            SelectObject selectObject = selectQueryToObject.getSelectObject();
 
-			System.out.println("Parser found tables: "
-					+ selectObject.getTableNames().toString()
-					+ "\nParser found columns: "
-					+ selectObject.getColumnNames().toString());
-			// InputStream is = new
-			// ByteArrayInputStream(inputString.getBytes("UTF-8"));
-			// SELECTMain.parse(is);
+            //just for understanding of how to use selectObject:
+/*            for(String columnName : selectObject.getNoPrefColNames()){
+                System.out.println("Column: " + columnName);
+            }
 
+            for(String tableName : selectObject.getTableNames()){
+                System.out.println("Table: " + tableName);
+            }
+*/
 			/*
 			 * this is in case the server receive an empty query string and
 			 * seems to work sendEmptyQueryResponseMessage(dataOutputStream);
@@ -250,10 +199,7 @@ class SessionHandler implements Runnable {
 			 * dataOutputStream.flush();
 			 */
 
-			String[] columns = { "name", "surname" };
-			sendRowDescription(dataOutputStream, columns);
-			String[] values = { "david", "riobo" };
-			sendDataRow(dataOutputStream, values);
+			sendData(dataOutputStream);
 			dataOutputStream.flush();
 
 			sendCommandCompleteMessage(dataOutputStream);
@@ -387,52 +333,52 @@ class SessionHandler implements Runnable {
 		 * Byten The value of the column, in the format indicated by the
 		 * associated format code. n is the above lengt
 		 */
+		
+		for ( int i = 0; i < 2; i++){
 
-		for (int i = 0; i < 2; i++) {
+		int tLen = 0;
+		short num = 4;
 
-			int tLen = 0;
-			short num = 4;
+		String val = "david";
+		int lenCol = nullTerminateString(val).length;
+		byte[] bval = nullTerminateString(val);
 
-			String val = "david";
-			int lenCol = nullTerminateString(val).length;
-			byte[] bval = nullTerminateString(val);
+		String val2 = "riobo";
+		int lenCol2 = nullTerminateString(val2).length;
+		byte[] bval2 = nullTerminateString(val2);
 
-			String val2 = "riobo";
-			int lenCol2 = nullTerminateString(val2).length;
-			byte[] bval2 = nullTerminateString(val2);
+		String val3 = "1992-01-17";
+		int lenCol3 = nullTerminateString(val3).length;
+		byte[] bval3 = nullTerminateString(val3);
 
-			String val3 = "1992-01-17";
-			int lenCol3 = nullTerminateString(val3).length;
-			byte[] bval3 = nullTerminateString(val3);
+		String val4 = "-87,61";
+		int lenCol4 = nullTerminateString(val4).length;
+		byte[] bval4 = nullTerminateString(val4);
 
-			String val4 = "-87,61";
-			int lenCol4 = nullTerminateString(val4).length;
-			byte[] bval4 = nullTerminateString(val4);
+		tLen = 4 + 2 + 4 + bval.length + 4 + bval2.length + 4 + bval3.length
+				+ 4 + bval4.length;
+		dataOutputStream.writeByte('D');
+		dataOutputStream.writeInt(tLen);
+		dataOutputStream.writeShort(num);
 
-			tLen = 4 + 2 + 4 + bval.length + 4 + bval2.length + 4
-					+ bval3.length + 4 + bval4.length;
-			dataOutputStream.writeByte('D');
-			dataOutputStream.writeInt(tLen);
-			dataOutputStream.writeShort(num);
+		dataOutputStream.writeInt(lenCol);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val)));
 
-			dataOutputStream.writeInt(lenCol);
-			dataOutputStream.writeBytes(new String(nullTerminateString(val)));
+		dataOutputStream.writeInt(lenCol2);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val2)));
 
-			dataOutputStream.writeInt(lenCol2);
-			dataOutputStream.writeBytes(new String(nullTerminateString(val2)));
+		// Returns Bad value for type date : 1992-01-17
 
-			// Returns Bad value for type date : 1992-01-17
+		dataOutputStream.writeInt(lenCol3);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val3)));
 
-			dataOutputStream.writeInt(lenCol3);
-			dataOutputStream.writeBytes(new String(nullTerminateString(val3)));
-
-			// Returns Bad value for type date too
-
-			dataOutputStream.writeInt(lenCol4);
-			dataOutputStream.writeBytes(new String(nullTerminateString(val4)));
-
+		// Returns Bad value for type date too
+		
+		dataOutputStream.writeInt(lenCol4);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val4)));
+		
 		}
-
+		
 		dataOutputStream.flush();
 
 	}
