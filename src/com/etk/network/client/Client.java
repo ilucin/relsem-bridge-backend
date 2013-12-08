@@ -79,7 +79,7 @@ public class Client {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st.executeQuery("SELECT id, name, surname FROM student");
+			ResultSet rs = st.executeQuery("SELECT a FROM b, c INNER JOIN z USING (a, b, c)");
 			while (rs.next()) {
 				String name = rs.getString("name");
 				System.out.println(name);

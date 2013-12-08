@@ -184,14 +184,14 @@ class SessionHandler implements Runnable {
             SelectObject selectObject = selectQueryToObject.getSelectObject();
 
             //just for understanding of how to use selectObject:
-            for(String columnName : selectObject.getColumnNames()){
+/*            for(String columnName : selectObject.getNoPrefColNames()){
                 System.out.println("Column: " + columnName);
             }
 
             for(String tableName : selectObject.getTableNames()){
                 System.out.println("Table: " + tableName);
             }
-
+*/
 			/*
 			 * this is in case the server receive an empty query string and
 			 * seems to work sendEmptyQueryResponseMessage(dataOutputStream);

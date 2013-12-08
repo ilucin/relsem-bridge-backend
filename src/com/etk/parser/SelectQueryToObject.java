@@ -38,14 +38,14 @@ public class SelectQueryToObject extends SELECTBaseListener {
         }
 
     }
-    public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
-        selectObject.addColumnName(ctx.columnName().getText());
+    /*public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
+        selectObject.addFreeColumnName(ctx.columnName().getText());
     }
 
     public void enterTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) {
         selectObject.addTableName(ctx.tableName().getText());
     }
-
+    */
     public SelectObject getSelectObject(){
         return this.selectObject;
     }
