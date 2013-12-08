@@ -16,7 +16,7 @@ public class SelectionClause {
 	public String getAttribute() {
 		return attribute;
 	}
-
+	
 	public Operator getOperator() {
 		return operator;
 	}
