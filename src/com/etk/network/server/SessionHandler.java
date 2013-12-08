@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import com.etk.parser.ProjectionCell;
 import com.etk.parser.SelectObject;
 import com.etk.parser.SelectQueryToObject;
 
@@ -183,15 +184,21 @@ class SessionHandler implements Runnable {
             SelectQueryToObject selectQueryToObject = new SelectQueryToObject(is);
             SelectObject selectObject = selectQueryToObject.getSelectObject();
 
+
             //just for understanding of how to use selectObject:
-/*            for(String columnName : selectObject.getNoPrefColNames()){
-                System.out.println("Column: " + columnName);
+      /*      for(String noPrefColName : selectObject.getNoPrefColNames()){
+                System.out.println("Column: " + noPrefColName);
+            }
+        */
+            for(ProjectionCell prefColName : selectObject.getPrefColNames()){
+                System.out.println("Prefixed column found \n    prefix: " + prefColName.getPrefix()
+                                    + "\n     column name: " + prefColName.getColumnName());
             }
 
             for(String tableName : selectObject.getTableNames()){
                 System.out.println("Table: " + tableName);
             }
-*/
+
 			/*
 			 * this is in case the server receive an empty query string and
 			 * seems to work sendEmptyQueryResponseMessage(dataOutputStream);
