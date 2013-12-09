@@ -79,12 +79,18 @@ public class Client {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st.executeQuery("SELECT id FROM student.student");
+			ResultSet rs = st.executeQuery(query);
+			
+			// getColumnNames from parser
+
+			String[] columns = { "name", "surname" };
+			
+			
+			int i=0;
 			while (rs.next()) {
-				String name = rs.getString("name");
-				System.out.println(name);
-				String surname = rs.getString("surname");
-				System.out.println(surname);
+				String value = rs.getString(columns[i]);
+				System.out.println(value);
+				i++;
 				// Date date = rs.getDate("date");
 				// System.out.println(date.toString());
 
