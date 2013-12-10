@@ -31,7 +31,7 @@ public class Receiver {
 			this.dataInputStream_.readByte();
 			return this.parser_.parseMsg(buf);
 		} catch (IOException e) {
-			System.out.println("Error in sendParseCompleteMessage: ");
+			System.out.println("Error in getPassword: ");
 			e.printStackTrace();
 		}
 		return null;
