@@ -22,12 +22,16 @@ import com.etk.parser.SelectQueryToObject;
 class SessionHandler implements Runnable {
 	private Socket server_;
 	private Sender sender_;
-
+	private Receiver receiver_;
+	private final String pass_ = "postgres";
+	
 	public SessionHandler(Socket server) {
 		this.server_ = server;
 		try {
 			this.sender_ = new Sender(new DataOutputStream(
 					server_.getOutputStream()));
+			this.receiver_ = new Receiver(new DataInputStream(
+					server_.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +60,20 @@ class SessionHandler implements Runnable {
 					+ protocolMinorVersion);
 
 			// System.out.println("Auth params: " + authParams);
+			
+			// ask for the password
+			this.sender_
+					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
+			this.sender_.flush();
 
+			String password = this.receiver_.getPassword();
+			System.out.println("Password: " + password);
+
+			if (!password.equals(this.pass_)) {
+				this.sender_.sendErrorResponse("Wrong Password!");
+				return;
+			}
+			
 			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
 			this.sender_.sendServerVersionMessage();
 			this.sender_.sendReadyForQueryMessage();
@@ -124,146 +141,8 @@ class SessionHandler implements Runnable {
 //				this.sender_.sendDataRow(queryResult.getAttributes());
 //				this.sender_.flush();
 //			}
-			List<String> values = new List<String>() {
-				
-				@Override
-				public <T> T[] toArray(T[] a) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public Object[] toArray() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public List<String> subList(int fromIndex, int toIndex) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public int size() {
-					// TODO Auto-generated method stub
-					return 0;
-				}
-				
-				@Override
-				public String set(int index, String element) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public boolean retainAll(Collection<?> c) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public boolean removeAll(Collection<?> c) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public String remove(int index) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public boolean remove(Object o) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public ListIterator<String> listIterator(int index) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public ListIterator<String> listIterator() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public int lastIndexOf(Object o) {
-					// TODO Auto-generated method stub
-					return 0;
-				}
-				
-				@Override
-				public Iterator<String> iterator() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public boolean isEmpty() {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public int indexOf(Object o) {
-					// TODO Auto-generated method stub
-					return 0;
-				}
-				
-				@Override
-				public String get(int index) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-				@Override
-				public boolean containsAll(Collection<?> c) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public boolean contains(Object o) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public void clear() {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public boolean addAll(int index, Collection<? extends String> c) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public boolean addAll(Collection<? extends String> c) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-				
-				@Override
-				public void add(int index, String element) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public boolean add(String e) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-			};
+
+			List<String> values = new ArrayList<String>();
 			values.add("david");
 			values.add("riobo");
 			this.sender_.sendDataRow(values);
