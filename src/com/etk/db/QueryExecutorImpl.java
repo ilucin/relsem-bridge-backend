@@ -10,6 +10,8 @@ import com.etk.data.DataSource;
 import com.etk.data.ValueCandidate;
 import com.etk.data.query.Properties;
 import com.etk.db.exceptions.RelsemDBException;
+import com.etk.db.model.RowCollection;
+import com.etk.db.model.Table;
 import com.etk.db.query.QueryResult;
 import com.etk.manager.schema.Attribute;
 import com.etk.manager.schema.Schema;
@@ -38,10 +40,24 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		//create a map requested tables
 		List<String> reqTables = sqlQuery.getTableNames();
 		
-		//fill reqProjection 
+		//liste attributa za danu tablicu
+		Map<String,List<Attribute>> reqProjection = new HashMap<String,List<Attribute>>();
 		
-		Map<String,List<Attribute>> reqProjection = null;
 		Map<String,List<Object>> tableSelects = new HashMap<>();  //valueCandidates for table and projection  
+		
+		
+		//fill reqProjection 
+		//for each requested table, load all domain attributes and fill into reqProject 
+		for(String rTable : reqTables) {
+			UserTable t = schema.getTable(rTable);
+			Map<String,Attribute> tAttributes = t.getAttributes();
+			reqProjection.put(t.getTableName(), new ArrayList<Attribute>());
+			for(String aName : tAttributes.keySet()) {
+				Attribute a = tAttributes.get(aName);
+				reqProjection.get(t.getTableName()).add(a);
+			}
+		}
+		
 		
 		for(String table : reqProjection.keySet()) {
 			List<Attribute> reqAttributes = reqProjection.get(table);
@@ -58,7 +74,20 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		}
 		
 		//convert lists of valueCandidates to rowCollections and join
+		Map<String, RowCollection> dataCollections = new HashMap<String, RowCollection>();
 		
+		for(String table : tableSelects.keySet()) {
+			RowCollection rc ;
+			
+			List<Object> valueCandidates = tableSelects.get(table);
+			for(Object vC : valueCandidates) {
+				ValueCandidate val = (ValueCandidate) vC;
+				//val is a map with attribute uris as keys
+				//create rows with attributes ordered as in domaintTable
+				
+				
+			}
+		}
 		
 		
 		
@@ -78,8 +107,8 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		}
 		
 		//TODO fix vaidation based on tables of requested attributes
-		for(String qAttr : sqlQuery.getColumnNames()) {
-		}
+//		for(String qAttr : sqlQuery.getColumnNames()) {
+//		}
 		
 		
 		
