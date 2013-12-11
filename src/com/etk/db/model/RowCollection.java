@@ -14,7 +14,6 @@ import java.util.Set;
 public interface RowCollection {
     public Collection<Row> getRows();
     public Set<String> getAttributes();
-    public int getSize();
     public Class getType(String attribute);     //do i need it?
     public int getAttributeIndex(String attribute);
 }

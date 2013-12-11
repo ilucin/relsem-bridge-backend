@@ -1,17 +1,13 @@
 package com.etk.network.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import com.etk.parser.SELECTMain;
+import com.etk.parser.ProjectionCell;
+import com.etk.parser.SelectObject;
+import com.etk.parser.SelectQueryToObject;
 
 class SessionHandler implements Runnable {
 	private Socket server_;
@@ -35,7 +31,7 @@ class SessionHandler implements Runnable {
 			throws IOException {
 		String param = "server_version";
 		String paramV = "9";
-		int lenP = param.getBytes().length + paramV.getBytes().length;
+
 		byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO BE
 		// NULTERMINATED EVEN THOUGH DOCS
 		// DONT MENTION IT
@@ -115,7 +111,7 @@ class SessionHandler implements Runnable {
 			dataOutputStream.writeByte('D');
 			// Problem with upper line, after that it brokes (tried with other
 			// types of write after it). Why? Problem of size?
-			//Tried wireshark, it sends ACK FIN
+			// Tried wireshark, it sends ACK FIN
 			dataOutputStream.writeInt(11);
 			dataOutputStream.writeShort(1);
 			dataOutputStream.writeInt(1);
@@ -144,14 +140,14 @@ class SessionHandler implements Runnable {
 			byte[] authParamsB = new byte[msgLen - 8]; // msglen - version and
 														// len
 			dataInputStream.read(authParamsB);
-			//String authParams = msgParser.parseMsg(authParamsB);
+			// String authParams = msgParser.parseMsg(authParamsB);
 
 			System.out.println("Client connected!");
-			//System.out.println("Msg len: " + msgLen);
+			// System.out.println("Msg len: " + msgLen);
 			System.out.println("Protocol: V" + protocolMajorVersion + "."
 					+ protocolMinorVersion);
 
-			//System.out.println("Auth params: " + authParams);
+			// System.out.println("Auth params: " + authParams);
 
 			sendAuthenticationOkMessage(dataOutputStream);
 
@@ -169,40 +165,56 @@ class SessionHandler implements Runnable {
 			/*
 			 * I think now the client wants the result of the query
 			 */
-			while (true) {
 
-				if (dataInputStream.available() > 0) {
-					byte type = dataInputStream.readByte();
-					int msgLength = dataInputStream.readInt();
-					System.out.println("Message Type: " + (char) type);
-					System.out.println("Lenght: " + msgLength);
+			// if (dataInputStream.available() > 0) {
+			byte type = dataInputStream.readByte();
+			int msgLength = dataInputStream.readInt();
+			System.out.println("Message Type: " + (char) type);
+			System.out.println("Lenght: " + msgLength);
 
-					byte[] buf = new byte[dataInputStream.available() - 4];
-					dataInputStream.read(buf);
-					String inputString = msgParser.parseMsg(buf);
-					System.out.println(inputString);
-					//InputStream is = new ByteArrayInputStream(inputString.getBytes("UTF-8"));
-					//SELECTMain.parse(is);
+			byte[] buf = new byte[dataInputStream.available() - 4];
+			dataInputStream.read(buf);
+			String inputString = msgParser.parseMsg(buf);
+			System.out.println(inputString);
+			InputStream is = new
+			    ByteArrayInputStream(inputString.getBytes("UTF-8"));
 
-					/*
-					 * this is in case the server receive an empty query string
-					 * and seems to work
-					 * sendEmptyQueryResponseMessage(dataOutputStream);
-					 * sendReadyForQueryMessage(dataOutputStream);
-					 * dataOutputStream.flush();
-					 */
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //Actual parsing of query and creation of selectObject which contains the query data:
+            SelectQueryToObject selectQueryToObject = new SelectQueryToObject(is);
+            SelectObject selectObject = selectQueryToObject.getSelectObject();
 
-                    sendData(dataOutputStream);
-                    dataOutputStream.flush();
 
-					sendCommandCompleteMessage(dataOutputStream);
-					sendReadyForQueryMessage(dataOutputStream);
-					dataOutputStream.flush();
+            //just for understanding of how to use selectObject:
+      /*      for(String noPrefColName : selectObject.getNoPrefColNames()){
+                System.out.println("Column: " + noPrefColName);
+            }
+        */
+            for(ProjectionCell prefColName : selectObject.getPrefColNames()){
+                System.out.println("Prefixed column found \n    prefix: " + prefColName.getPrefix()
+                                    + "\n     column name: " + prefColName.getColumnName());
+            }
 
-					// reply to the client msg, delete exit
-				}
+            for(String tableName : selectObject.getTableNames()){
+                System.out.println("Table: " + tableName);
+            }
 
-			}
+			/*
+			 * this is in case the server receive an empty query string and
+			 * seems to work sendEmptyQueryResponseMessage(dataOutputStream);
+			 * sendReadyForQueryMessage(dataOutputStream);
+			 * dataOutputStream.flush();
+			 */
+
+			sendData(dataOutputStream);
+			dataOutputStream.flush();
+
+			sendCommandCompleteMessage(dataOutputStream);
+			sendReadyForQueryMessage(dataOutputStream);
+			dataOutputStream.flush();
+
+			// reply to the client msg, delete exit
+			// }
 
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
@@ -213,94 +225,172 @@ class SessionHandler implements Runnable {
 		}
 	}
 
-    private void sendData(DataOutputStream dataOutputStream) throws IOException {
-        /*RowDescription (B)
-        Byte1('T')
-                Identifies the message as a row description.
-                Int32   Length of message contents in bytes, including self.
-                Int16   Specifies the number of fields in a row (may be zero).
-                Then, for each field, there is the following:
-        String
-        The field name.
-        Int32
-        If the field can be identified as a column of a specific table, the object ID of the table; otherwise zero.
-        Int16
-        If the field can be identified as a column of a specific table, the attribute number of the column; otherwise zero.
-        Int32
-        The object ID of the field's data type.
-        Int16
-        The data type size (see pg_type.typlen). Note that negative values denote variable-width types.
-        Int32
-        The type modifier (see pg_attribute.atttypmod). The meaning of the modifier is type-specific.
-        Int16
-        The format code being used for the field. Currently will be zero (text) or one (binary). In a RowDescription returned from the statement variant of Describe, the format code is not yet known and will always be zero.
+	private void sendData(DataOutputStream dataOutputStream) throws IOException {
+		/*
+		 * RowDescription (B) Byte1('T') Identifies the message as a row
+		 * description. Int32 Length of message contents in bytes, including
+		 * self. Int16 Specifies the number of fields in a row (may be zero).
+		 * Then, for each field, there is the following: String The field name.
+		 * Int32 If the field can be identified as a column of a specific table,
+		 * the object ID of the table; otherwise zero. Int16 If the field can be
+		 * identified as a column of a specific table, the attribute number of
+		 * the column; otherwise zero. Int32 The object ID of the field's data
+		 * type. Int16 The data type size (see pg_type.typlen). Note that
+		 * negative values denote variable-width types. Int32 The type modifier
+		 * (see pg_attribute.atttypmod). The meaning of the modifier is
+		 * type-specific. Int16 The format code being used for the field.
+		 * Currently will be zero (text) or one (binary). In a RowDescription
+		 * returned from the statement variant of Describe, the format code is
+		 * not yet known and will always be zero.
+		 * 
+		 * SSLRequest (F)
+		 */
 
-                SSLRequest (F)*/
-        dataOutputStream.writeByte('T');
+		short fieldsNo = 4;
 
-        short fieldsNo = 1;
+		String name = "name";
+		byte[] bName = nullTerminateString(name);
+		int identificator = 0;
+		short identificatorAtr = 0;
+		int typeInd = 0;
+		short typeLen = -2;
+		int typeMod = -1;
+		short formatCode = 0;
 
-        String name = "id";
-        byte[] bName = nullTerminateString(name);
-        int identificator = 0;
-        short identificatorAtr = 0;
-        int typeInd = 0;
-        short typeLen = -2;
-        int typeMod = -1;
-        short formatCode = 0;
+		String name2 = "surname";
+		byte[] bName2 = nullTerminateString(name2);
+		int identificator2 = 0;
+		short identificatorAtr2 = 0;
+		int typeInd2 = 0;
+		short typeLen2 = -2;
+		int typeMod2 = -1;
+		short formatCode2 = 0;
 
-        int totalSize = bName.length + 4 +2 +4 +2 + 4 +2+4;
+		String name3 = "date";
+		byte[] bName3 = nullTerminateString(name3);
+		int identificator3 = 0;
+		short identificatorAtr3 = 0;
+		int typeInd3 = 0;
+		short typeLen3 = -2;
+		int typeMod3 = -1;
+		short formatCode3 = 0;
 
-        dataOutputStream.writeInt(totalSize);
-        dataOutputStream.writeShort(fieldsNo);
-        dataOutputStream.writeBytes(new String(bName));
-        dataOutputStream.writeInt(identificator);
-        dataOutputStream.writeShort(identificatorAtr);
-        dataOutputStream.writeInt(typeInd);
-        dataOutputStream.writeShort(typeLen);
-        dataOutputStream.writeInt(typeMod);
-        dataOutputStream.writeShort(formatCode);
+		String name4 = "number";
+		byte[] bName4 = nullTerminateString(name4);
+		int identificator4 = 0;
+		short identificatorAtr4 = 0;
+		int typeInd4 = 0;
+		short typeLen4 = -2;
+		int typeMod4 = -1;
+		short formatCode4 = 0;
 
+		int totalSize = bName.length + 4 + 2 + 4 + 2 + 4 + 2 + 4
+				+ bName3.length + 4 + 2 + 4 + 2 + 2 + bName4.length + 4 + 2 + 4
+				+ 2 + 2;
 
+		dataOutputStream.writeByte('T');
+		dataOutputStream.writeInt(totalSize);
+		dataOutputStream.writeShort(fieldsNo);
 
-/*
-        Byte1('D')
-        Identifies the message as a data row.
+		dataOutputStream.writeBytes(new String(bName));
+		dataOutputStream.writeInt(identificator);
+		dataOutputStream.writeShort(identificatorAtr);
+		dataOutputStream.writeInt(typeInd);
+		dataOutputStream.writeShort(typeLen);
+		dataOutputStream.writeInt(typeMod);
+		dataOutputStream.writeShort(formatCode);
 
-                Int32
-        Length of message contents in bytes, including self.
+		dataOutputStream.writeBytes(new String(bName2));
+		dataOutputStream.writeInt(identificator2);
+		dataOutputStream.writeShort(identificatorAtr2);
+		dataOutputStream.writeInt(typeInd2);
+		dataOutputStream.writeShort(typeLen2);
+		dataOutputStream.writeInt(typeMod2);
+		dataOutputStream.writeShort(formatCode2);
 
-                Int16
-        The number of column values that follow (possibly zero).
+		dataOutputStream.writeBytes(new String(bName3));
+		dataOutputStream.writeInt(identificator3);
+		dataOutputStream.writeShort(identificatorAtr3);
+		dataOutputStream.writeInt(typeInd3);
+		dataOutputStream.writeShort(typeLen3);
+		dataOutputStream.writeInt(typeMod3);
+		dataOutputStream.writeShort(formatCode3);
 
-                Next, the following pair of fields appear for each column:
+		dataOutputStream.writeBytes(new String(bName4));
+		dataOutputStream.writeInt(identificator4);
+		dataOutputStream.writeShort(identificatorAtr4);
+		dataOutputStream.writeInt(typeInd4);
+		dataOutputStream.writeShort(typeLen4);
+		dataOutputStream.writeInt(typeMod4);
+		dataOutputStream.writeShort(formatCode4);
 
-        Int32
-        The length of the column value, in bytes (this count does not include itself). Can be zero. As a special case, -1 indicates a NULL column value. No value bytes follow in the NULL case.
+		/*
+		 * Byte1('D') Identifies the message as a data row.
+		 * 
+		 * Int32 Length of message contents in bytes, including self.
+		 * 
+		 * Int16 The number of column values that follow (possibly zero).
+		 * 
+		 * Next, the following pair of fields appear for each column:
+		 * 
+		 * Int32 The length of the column value, in bytes (this count does not
+		 * include itself). Can be zero. As a special case, -1 indicates a NULL
+		 * column value. No value bytes follow in the NULL case.
+		 * 
+		 * Byten The value of the column, in the format indicated by the
+		 * associated format code. n is the above lengt
+		 */
+		
+		for ( int i = 0; i < 2; i++){
 
-        Byten
-        The value of the column, in the format indicated by the associated format code. n is the above lengt*/
+		int tLen = 0;
+		short num = 4;
 
-        int tLen = 0;
-        short num = 1;
-        String val = "324";
-        int lenCol = nullTerminateString(val).length;
-        byte[] bval = nullTerminateString(val);
+		String val = "david";
+		int lenCol = nullTerminateString(val).length;
+		byte[] bval = nullTerminateString(val);
 
-        tLen = 4+2+4+bval.length;
-        dataOutputStream.writeByte('D');
-        dataOutputStream.writeInt(tLen);
-        dataOutputStream.writeShort(num);
-        dataOutputStream.writeInt(lenCol);
-        dataOutputStream.writeBytes(new String(nullTerminateString(val)));
+		String val2 = "riobo";
+		int lenCol2 = nullTerminateString(val2).length;
+		byte[] bval2 = nullTerminateString(val2);
 
-        dataOutputStream.flush();
+		String val3 = "1992-01-17";
+		int lenCol3 = nullTerminateString(val3).length;
+		byte[] bval3 = nullTerminateString(val3);
 
+		String val4 = "-87,61";
+		int lenCol4 = nullTerminateString(val4).length;
+		byte[] bval4 = nullTerminateString(val4);
 
+		tLen = 4 + 2 + 4 + bval.length + 4 + bval2.length + 4 + bval3.length
+				+ 4 + bval4.length;
+		dataOutputStream.writeByte('D');
+		dataOutputStream.writeInt(tLen);
+		dataOutputStream.writeShort(num);
 
-    }
+		dataOutputStream.writeInt(lenCol);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val)));
 
-    private class MsgParser {
+		dataOutputStream.writeInt(lenCol2);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val2)));
+
+		// Returns Bad value for type date : 1992-01-17
+
+		dataOutputStream.writeInt(lenCol3);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val3)));
+
+		// Returns Bad value for type date too
+		
+		dataOutputStream.writeInt(lenCol4);
+		dataOutputStream.writeBytes(new String(nullTerminateString(val4)));
+		
+		}
+		
+		dataOutputStream.flush();
+
+	}
+
+	private class MsgParser {
 
 		public short parseShort(byte[] bytes) {
 			byte[] typeBytes = new byte[2];
@@ -316,7 +406,8 @@ class SessionHandler implements Runnable {
 			return len;
 		}
 
-		public String parseMsg(byte[] bytes) throws UnsupportedEncodingException {
+		public String parseMsg(byte[] bytes)
+				throws UnsupportedEncodingException {
 			String msgString = new String(bytes, "UTF-8");
 			return msgString;
 		}

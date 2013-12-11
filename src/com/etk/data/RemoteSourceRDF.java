@@ -3,6 +3,7 @@ package com.etk.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.etk.data.query.Properties;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -23,14 +24,14 @@ public class RemoteSourceRDF implements DataSource{
 	}
 	
 	@Override
-	public List<Object> getEntityCandidates(int limit, int offset, boolean label) {
+	public List<Object> getEntityCandidates(Properties queryProperties) {
 		String queryString = queryStringTemplate;
 		queryString += "SELECT (COUNT(?o) as ?num) ?o WHERE { ?s a ?o. ";
 
 		// Checks should the sparql query ask for a rdfs:label
 		// This should be used only if you are sure that there is a predicate
 		// rdfs:label in the data source
-		if( label ){
+		if( queryProperties.isLabel() ){
 			queryString += "?o rdfs:label ?label. " + 
                            "FILTER (lang(?label) = 'en' || lang(?label) = '') ";
 		}
@@ -43,13 +44,13 @@ public class RemoteSourceRDF implements DataSource{
 		*/
 		
 		//Add order by and sort by
-		queryString += " GROUP BY ?o ORDER BY ASC(?num)";
+		queryString += " GROUP BY ?o ORDER BY DESC(?num)";
 		
-		if( limit != 0 ){
-			queryString += " LIMIT " + Integer.toString( limit );
+		if( queryProperties.getLimit() != 0 ){
+			queryString += " LIMIT " + Integer.toString( queryProperties.getLimit() );
 		}
-		if( offset != 0 ){
-			queryString += " OFFSET " + Integer.toString( offset );
+		if( queryProperties.getOffset() != 0 ){
+			queryString += " OFFSET " + Integer.toString( queryProperties.getOffset() );
 		}
 		
 		
@@ -60,7 +61,7 @@ public class RemoteSourceRDF implements DataSource{
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
     	
-		return entityCandidatesFromRS(resultSet, label);
+		return entityCandidatesFromRS(resultSet, queryProperties.isLabel());
 	}
 	
 	private List<Object> entityCandidatesFromRS(ResultSet resultSet, boolean label){
@@ -86,7 +87,11 @@ public class RemoteSourceRDF implements DataSource{
 	}
 
 	@Override
-	public List<Object> getAttributes(String entity, int limit, int offset, boolean label){
+	public List<Object> getAttributes(String entity, Properties queryProperties){
+		boolean label = queryProperties.isLabel();
+		int offset = queryProperties.getOffset();
+		int limit = queryProperties.getLimit();
+		
 		String queryString = queryStringTemplate;
 		queryString += "Select (count(?p) as ?num) ?p WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
 					   " ?s ?p ?o." + 
@@ -158,8 +163,13 @@ public class RemoteSourceRDF implements DataSource{
 	}
 
 	@Override
-	public List<Object> getValues(String entity, String attributes[], int limit, int offset) {
+	public List<Object> getValues(String entity, String attributes[], Properties queryProperties) {
 		String queryString = queryStringTemplate;
+		boolean label = queryProperties.isLabel();
+		int offset = queryProperties.getOffset();
+		int limit = queryProperties.getLimit();
+		
+		
 		queryString += "Select distinct ?s " + repeateString("?o", attributes.length) + 
 					   " WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">.";
 		
@@ -181,8 +191,9 @@ public class RemoteSourceRDF implements DataSource{
 		}
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
-		}		
-		Query query = QueryFactory.create(queryString);
+		}
+        System.out.println(queryString);
+        Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
@@ -224,10 +235,10 @@ public class RemoteSourceRDF implements DataSource{
 	
 	private String repeateString(String s, int n){
 		String out = " ";
-		
-		for(int i = 0; i < n; i++){
-			out += s + i + " ";
-		}
+
+        for(int i = 0; i < n; i++){
+            out += s + i + " ";
+        }
 		
 		return out;
 	}

@@ -1,6 +1,4 @@
-package com.etk.parser;
-
-// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
+package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -31,13 +29,13 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterTableReference(@NotNull SELECTParser.TableReferenceContext ctx) { }
+	@Override public void enterColumnNameList(@NotNull SELECTParser.ColumnNameListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitTableReference(@NotNull SELECTParser.TableReferenceContext ctx) { }
+	@Override public void exitColumnNameList(@NotNull SELECTParser.ColumnNameListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -57,19 +55,6 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBooleanTest(@NotNull SELECTParser.BooleanTestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBooleanTest(@NotNull SELECTParser.BooleanTestContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterTruthValue(@NotNull SELECTParser.TruthValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -83,26 +68,26 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) { }
+	@Override public void enterNamedColumnsJoin(@NotNull SELECTParser.NamedColumnsJoinContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) { }
+	@Override public void exitNamedColumnsJoin(@NotNull SELECTParser.NamedColumnsJoinContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterQuerySpecification(@NotNull SELECTParser.QuerySpecificationContext ctx) { }
+	@Override public void enterJoinCondition(@NotNull SELECTParser.JoinConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitQuerySpecification(@NotNull SELECTParser.QuerySpecificationContext ctx) { }
+	@Override public void exitJoinCondition(@NotNull SELECTParser.JoinConditionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -122,39 +107,13 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBooleanValueExpression(@NotNull SELECTParser.BooleanValueExpressionContext ctx) { }
+	@Override public void enterQuerySpecification(@NotNull SELECTParser.QuerySpecificationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitBooleanValueExpression(@NotNull SELECTParser.BooleanValueExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterBooleanPredicand(@NotNull SELECTParser.BooleanPredicandContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBooleanPredicand(@NotNull SELECTParser.BooleanPredicandContext ctx) { }
+	@Override public void exitQuerySpecification(@NotNull SELECTParser.QuerySpecificationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -174,13 +133,26 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx) { }
+	@Override public void enterBooleanPredicand(@NotNull SELECTParser.BooleanPredicandContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitTableReferenceList(@NotNull SELECTParser.TableReferenceListContext ctx) { }
+	@Override public void exitBooleanPredicand(@NotNull SELECTParser.BooleanPredicandContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterUnionJoin(@NotNull SELECTParser.UnionJoinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitUnionJoin(@NotNull SELECTParser.UnionJoinContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -226,13 +198,13 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterParenthizedBooleanValueExpression(@NotNull SELECTParser.ParenthizedBooleanValueExpressionContext ctx) { }
+	@Override public void enterTableName(@NotNull SELECTParser.TableNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitParenthizedBooleanValueExpression(@NotNull SELECTParser.ParenthizedBooleanValueExpressionContext ctx) { }
+	@Override public void exitTableName(@NotNull SELECTParser.TableNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -246,6 +218,227 @@ public class SELECTBaseListener implements SELECTListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSearchCondition(@NotNull SELECTParser.SearchConditionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterCrossJoin(@NotNull SELECTParser.CrossJoinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitCrossJoin(@NotNull SELECTParser.CrossJoinContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterSelectStmnt(@NotNull SELECTParser.SelectStmntContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSelectStmnt(@NotNull SELECTParser.SelectStmntContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterColumnInTable(@NotNull SELECTParser.ColumnInTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitColumnInTable(@NotNull SELECTParser.ColumnInTableContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterJoinSpec(@NotNull SELECTParser.JoinSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitJoinSpec(@NotNull SELECTParser.JoinSpecContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBooleanTest(@NotNull SELECTParser.BooleanTestContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBooleanTest(@NotNull SELECTParser.BooleanTestContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterParenthesizedBoolValueExpr(@NotNull SELECTParser.ParenthesizedBoolValueExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitParenthesizedBoolValueExpr(@NotNull SELECTParser.ParenthesizedBoolValueExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterFreeColumn(@NotNull SELECTParser.FreeColumnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitFreeColumn(@NotNull SELECTParser.FreeColumnContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBooleanValueExpression(@NotNull SELECTParser.BooleanValueExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBooleanValueExpression(@NotNull SELECTParser.BooleanValueExpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterJoinClause(@NotNull SELECTParser.JoinClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitJoinClause(@NotNull SELECTParser.JoinClauseContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterResultExpression(@NotNull SELECTParser.ResultExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitResultExpression(@NotNull SELECTParser.ResultExpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterNaturalJoin(@NotNull SELECTParser.NaturalJoinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitNaturalJoin(@NotNull SELECTParser.NaturalJoinContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterColumn(@NotNull SELECTParser.ColumnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitColumn(@NotNull SELECTParser.ColumnContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterQualifiedJoin(@NotNull SELECTParser.QualifiedJoinContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitQualifiedJoin(@NotNull SELECTParser.QualifiedJoinContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -278,13 +471,26 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterSelectStmnt(@NotNull SELECTParser.SelectStmntContext ctx) { }
+	@Override public void enterJoinType(@NotNull SELECTParser.JoinTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitSelectStmnt(@NotNull SELECTParser.SelectStmntContext ctx) { }
+	@Override public void exitJoinType(@NotNull SELECTParser.JoinTypeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterOuterJoinType(@NotNull SELECTParser.OuterJoinTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitOuterJoinType(@NotNull SELECTParser.OuterJoinTypeContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
