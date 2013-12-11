@@ -11,13 +11,14 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-public class RemoteSourceRDF implements DataSource{
+public class RemoteSourceHierarchyRDF implements DataSource{
 	String service;
 	String queryStringTemplate;
+	String defaultDataSetName;
 	
-	public RemoteSourceRDF( String service ){
+	public RemoteSourceHierarchyRDF( String service, String defaultDataSetName ){
 		this.service = service;
-		
+		this.defaultDataSetName = defaultDataSetName;
 		queryStringTemplate = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 					  "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ";
 	}
@@ -25,7 +26,9 @@ public class RemoteSourceRDF implements DataSource{
 	@Override
 	public List<Object> getEntityCandidates(int limit, int offset, boolean label) {
 		String queryString = queryStringTemplate;
-		queryString += "SELECT (COUNT(?o) as ?num) ?o WHERE { ?s a ?o. ";
+		queryString += "SELECT DISTINCT (count(?o) as ?num) ?o FROM <" + defaultDataSetName + "> " +
+				  	   "WHERE { ?s rdfs:subClassOf ?o. " +
+					   "FILTER NOT EXISTS { ?o rdfs:subClassOf ?o2 }. ";
 
 		// Checks should the sparql query ask for a rdfs:label
 		// This should be used only if you are sure that there is a predicate
@@ -43,7 +46,7 @@ public class RemoteSourceRDF implements DataSource{
 		*/
 		
 		//Add order by and sort by
-		queryString += " GROUP BY ?o ORDER BY ASC(?num)";
+		queryString += " GROUP BY ?o ORDER BY DESC(?num)";
 		
 		if( limit != 0 ){
 			queryString += " LIMIT " + Integer.toString( limit );
@@ -51,9 +54,6 @@ public class RemoteSourceRDF implements DataSource{
 		if( offset != 0 ){
 			queryString += " OFFSET " + Integer.toString( offset );
 		}
-		
-		
-		
 		System.out.println(queryString);		
 		Query query = QueryFactory.create(queryString);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
@@ -239,7 +239,41 @@ public class RemoteSourceRDF implements DataSource{
 	@Override
 	public List<Object> getEntityCandidates(String superClass, int limit,
 			int offset, boolean label) {
-		// TODO Auto-generated method stub
-		return null;
+		String queryString = queryStringTemplate;
+		queryString += "SELECT DISTINCT (count(?o) as ?num) ?o FROM <" + defaultDataSetName + "> " +
+				  	   "WHERE { ?s rdfs:subClassOf ?o. " +
+					   "FILTER NOT EXISTS { ?o rdfs:subClassOf ?o2 }. ";
+
+		// Checks should the sparql query ask for a rdfs:label
+		// This should be used only if you are sure that there is a predicate
+		// rdfs:label in the data source
+		if( label ){
+			queryString += "?o rdfs:label ?label. " + 
+                           "FILTER (lang(?label) = 'en' || lang(?label) = '') ";
+		}
+		
+		queryString += "}";
+		/* For now I will disable order by, because it is very slow
+		if( limit != 0 && offset != 0 ){
+			queryString += " ORDER BY ?o";
+		}
+		*/
+		
+		//Add order by and sort by
+		queryString += " GROUP BY ?o ORDER BY DESC(?num)";
+		
+		if( limit != 0 ){
+			queryString += " LIMIT " + Integer.toString( limit );
+		}
+		if( offset != 0 ){
+			queryString += " OFFSET " + Integer.toString( offset );
+		}
+		System.out.println(queryString);		
+		Query query = QueryFactory.create(queryString);
+    	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
+    											service, query );
+    	ResultSet resultSet = queryExecution.execSelect();
+    	
+		return entityCandidatesFromRS(resultSet, label);
 	}
 }
