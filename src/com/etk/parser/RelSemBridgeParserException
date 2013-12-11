@@ -1,8 +1,0 @@
-package com.etk.parser;
-
-public class RelSemBridgeParserException extends Exception {
-
-	public RelSemBridgeParserException(String msg) {
-        super(msg);
-    }
-}
