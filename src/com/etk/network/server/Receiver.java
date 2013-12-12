@@ -8,12 +8,36 @@ import java.util.Arrays;
 
 public class Receiver {
 
-	DataInputStream dataInputStream_;
-	MsgParser parser_;
+	private DataInputStream dataInputStream_;
+	private MsgParser parser_;
+	private short protocolMinorVersion_;
+	private short protocolMajorVersion_;
+	private String username_;
+	private String dbName_;
 
 	public Receiver(DataInputStream input) {
 		this.dataInputStream_ = input;
 		this.parser_ = new MsgParser();
+		this.protocolMajorVersion_ = 0;
+		this.protocolMinorVersion_ = 0;
+		this.username_ = null;
+		this.dbName_ = null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getUsername() {
+		return this.username_;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDBName() {
+		return this.dbName_;
 	}
 
 	/**
@@ -24,12 +48,12 @@ public class Receiver {
 		try {
 			this.dataInputStream_.readByte();
 			int msgLength = dataInputStream_.readInt();
-			// - 4 for message lenght, - 1 for terminator
-			byte[] buf = new byte[msgLength - 4 - 1];
+			// - 4 for message lenght
+			byte[] buf = new byte[msgLength - 4];
 			this.dataInputStream_.read(buf);
-			// remove the terminator
-			this.dataInputStream_.readByte();
-			return this.parser_.parseMsg(buf);
+			byte delim = 0;
+			ByteTokenizer bt = new ByteTokenizer(buf , delim);
+			return this.parser_.parseMsg(bt.nexToken());
 		} catch (IOException e) {
 			System.out.println("Error in getPassword: ");
 			e.printStackTrace();
@@ -50,14 +74,47 @@ public class Receiver {
 	 * 
 	 * @return
 	 */
+	public void receiveAuthMessage() {
+		try {
+			int msgLen = dataInputStream_.readInt();
+			this.protocolMajorVersion_ = dataInputStream_.readShort();
+			this.protocolMinorVersion_ = dataInputStream_.readShort();
+
+			// -4 for message lenght, -2 for the protocolMajorVersion_, -2 for
+			// the protocolMinorVersion_
+			byte[] buf = new byte[msgLen - 4 - 2 - 2];
+			this.dataInputStream_.read(buf);
+			byte delim = 0;
+			ByteTokenizer bt = new ByteTokenizer(buf, delim);
+
+			// "user" string
+			bt.nexToken();
+			this.username_ = this.parser_.parseMsg(bt.nexToken());
+			// "database" string
+			bt.nexToken();
+			this.dbName_ = this.parser_.parseMsg(bt.nexToken());
+			// from now on useless things like timezone, to print comment out
+			// following lines
+			while (bt.hasMoreTokens())
+				System.out.println(this.parser_.parseMsg(bt.nexToken()));
+		} catch (Exception e) {
+			System.out.println("Error in receiveAuthMessage: ");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public char getMessageType() {
 		try {
 			return (char) this.dataInputStream_.readByte();
-		} catch (Exception e){
+		} catch (Exception e) {
 		}
 		return 'e';
 	}
-	
+
 	/**
 	 * 
 	 * @return
