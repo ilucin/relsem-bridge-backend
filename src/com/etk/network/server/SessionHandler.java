@@ -17,7 +17,6 @@ class SessionHandler implements Runnable {
 	private Socket server_;
 	private Sender sender_;
 	private Receiver receiver_;
-	private final String pass_ = "postgres";
 
 	public SessionHandler(Socket server) {
 		this.server_ = server;
@@ -38,26 +37,6 @@ class SessionHandler implements Runnable {
 					server_.getInputStream());
 
 			MsgParser msgParser = new MsgParser();
-
-			this.receiver_.receiveAuthMessage();
-
-			// ask for the password
-			this.sender_
-					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
-			this.sender_.flush();
-
-			String password = this.receiver_.getPassword();
-			System.out.println("Password: " + password);
-
-			if (!password.equals(this.pass_)) {
-				this.sender_.sendErrorResponse("Wrong Password!");
-				return;
-			}
-
-			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
-			this.sender_.sendServerVersionMessage();
-			this.sender_.sendReadyForQueryMessage();
-			this.sender_.flush();
 
 			// if (dataInputStream.available() > 0) {
 			byte type = dataInputStream.readByte();

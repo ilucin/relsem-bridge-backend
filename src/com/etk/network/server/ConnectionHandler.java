@@ -1,6 +1,7 @@
 package com.etk.network.server;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -11,6 +12,21 @@ public class ConnectionHandler implements Runnable {
 	private Sender sender_;
 	private Receiver receiver_;
 	private final String pass_ = "postgres";
+	
+	
+	
+	public ConnectionHandler(Socket server) {
+		this.server_ = server;
+		try {
+			this.sender_ = new Sender(new DataOutputStream(
+					server_.getOutputStream()));
+			this.receiver_ = new Receiver(new DataInputStream(
+					server_.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@Override
 	public void run() {
