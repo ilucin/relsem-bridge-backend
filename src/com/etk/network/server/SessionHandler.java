@@ -1,33 +1,24 @@
 package com.etk.network.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.etk.db.DBMSExecutor;
 import com.etk.db.query.QueryResult;
-import com.etk.parser.SelectObject;
-import com.etk.parser.SelectObject;
-import com.etk.parser.SelectObject;
-impor
-import com.etk.parser.SelectQueryToObject;t com.etk.parser.SelectQueryToObject;
 
 class SessionHandler implements Runnable {
 	private Socket server_;
 	private Sender sender_;
 	private Receiver receiver_;
 	private final String pass_ = "postgres";
-	
+
 	public SessionHandler(Socket server) {
 		this.server_ = server;
 		try {
@@ -48,22 +39,8 @@ class SessionHandler implements Runnable {
 
 			MsgParser msgParser = new MsgParser();
 
-			int msgLen = dataInputStream.readInt();
-			short protocolMajorVersion = dataInputStream.readShort();
-			short protocolMinorVersion = dataInputStream.readShort();
+			this.receiver_.receiveAuthMessage();
 
-			byte[] authParamsB = new byte[msgLen - 8]; // msglen - version and
-														// len
-			dataInputStream.read(authParamsB);
-			String authParams = msgParser.parseMsg(authParamsB);
-
-			System.out.println("Client connected!");
-			System.out.println("Msg len: " + msgLen);
-			System.out.println("Protocol: V" + protocolMajorVersion + "."
-					+ protocolMinorVersion);
-
-			// System.out.println("Auth params: " + authParams);
-			
 			// ask for the password
 			this.sender_
 					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
@@ -76,7 +53,7 @@ class SessionHandler implements Runnable {
 				this.sender_.sendErrorResponse("Wrong Password!");
 				return;
 			}
-			
+
 			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
 			this.sender_.sendServerVersionMessage();
 			this.sender_.sendReadyForQueryMessage();
@@ -98,8 +75,6 @@ class SessionHandler implements Runnable {
 			dataInputStream.read(buf);
 			String inputString = msgParser.parseMsg(buf);
 			System.out.println(inputString);
-
-			//sender_.sendErrorResponse("Hello World");
 
 			// InputStream is = new ByteArrayInputStream(
 			// inputString.getBytes("UTF-8"));
@@ -139,23 +114,20 @@ class SessionHandler implements Runnable {
 			String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(columns);
 
-//			for (int i = 0; i < queryResultList.size(); i++) {
-//				QueryResult queryResult = queryResultList.get(i);
-//				this.sender_.sendDataRow(queryResult.getAttributes());
-//				this.sender_.flush();
-//			}
+			// for (int i = 0; i < queryResultList.size(); i++) {
+			// QueryResult queryResult = queryResultList.get(i);
+			// this.sender_.sendDataRow(queryResult.getAttributes());
+			// this.sender_.flush();
+			// }
 
 			List<String> values = new ArrayList<String>();
 			values.add("david");
 			values.add("riobo");
 			this.sender_.sendDataRow(values);
-			
+
 			this.sender_.sendCommandCompleteMessage();
 			this.sender_.sendReadyForQueryMessage();
 			this.sender_.flush();
-
-			// reply to the client msg, delete exit
-			// }
 
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
@@ -186,7 +158,5 @@ class SessionHandler implements Runnable {
 			String msgString = new String(bytes, "UTF-8");
 			return msgString;
 		}
-
 	}
-
 }
