@@ -93,10 +93,10 @@ public class Receiver {
 			// "database" string
 			bt.nexToken();
 			this.dbName_ = this.parser_.parseMsg(bt.nexToken());
-			// from now on useless things like timezone, to print comment out
+			// from now on useless things like timezone, to print uncomment the
 			// following lines
-			while (bt.hasMoreTokens())
-				System.out.println(this.parser_.parseMsg(bt.nexToken()));
+			// while (bt.hasMoreTokens())
+			// System.out.println(this.parser_.parseMsg(bt.nexToken()));
 		} catch (Exception e) {
 			System.out.println("Error in receiveAuthMessage: ");
 			e.printStackTrace();
