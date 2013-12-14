@@ -161,8 +161,8 @@ public class ByteTokenizer implements Enumeration<byte[]> {
 		while (position < maxPosition) {
 			if (isDelimiter(position)) {
 				position += delimiters.length;
-			}
-			break;
+			} else
+				break;
 		}
 		return position;
 	}
