@@ -24,6 +24,14 @@ public class SelectionClause {
 	public Object getValue() {
 		return value;
 	}
+
+	public boolean isNegated() {
+		return negated;
+	}
+
+	public void setNegated(boolean negated) {
+		this.negated = negated;
+	}
 	
 	
 }
