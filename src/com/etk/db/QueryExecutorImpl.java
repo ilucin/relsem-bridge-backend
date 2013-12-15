@@ -7,15 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.etk.data.DataSource;
+import com.etk.data.RemoteSourceHierarchyRDF;
 import com.etk.data.RemoteSourceRDF;
 import com.etk.data.ValueCandidate;
 import com.etk.data.query.Properties;
 import com.etk.db.exceptions.RelsemDBException;
+import com.etk.db.model.Row;
 import com.etk.db.model.RowCollection;
+import com.etk.db.model.RowImple;
 import com.etk.db.model.Table;
 import com.etk.db.query.QueryResult;
 import com.etk.manager.schema.Attribute;
 import com.etk.manager.schema.Schema;
+import com.etk.manager.schema.Type;
 import com.etk.manager.schema.UserTable;
 import com.etk.parser.ProjectionCell;
 import com.etk.parser.SelectObject;
@@ -28,7 +32,8 @@ public class QueryExecutorImpl implements DBMSExecutor {
 	
 	public QueryExecutorImpl(Schema schema) {
 		this.schema = schema;
-		this.dataSource = new RemoteSourceRDF("http://dbpedia.org/sparql");
+		this.dataSource = new RemoteSourceHierarchyRDF(
+				"http://dbpedia.org/sparql", "http://dbpedia.org");
 	}
 	
 
@@ -49,6 +54,7 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		Map<String,List<Attribute>> attributes = new HashMap<String,List<Attribute>>();
 		Map<String,Boolean> idRequested = new HashMap<String,Boolean>();
 		Map<String,List<ValueCandidate>> values = new HashMap<String,List<ValueCandidate>>();
+		Map<String,List<Row>> rows = new HashMap<String,List<Row>>();
 		
 		
 		for(String rTable : sqlQuery.getTableNames()) {
@@ -87,21 +93,105 @@ public class QueryExecutorImpl implements DBMSExecutor {
 				}
 			}
 			
+			//add attributes from join conditions
+			
 		
 			
 			idRequested.put(tableName, requested);
 			attributes.put(tableName, rAttributes);
 			
 			values.put(tableName, getValues(attributes.get(tableName),idRequested.get(tableName),uTable.getEntityUri()));
+			rows.put(tableName, getRowCollection(values.get(tableName), attributes.get(tableName), true));
+			
+			
+			
+		}
+		
+		for(String tbl : rows.keySet()) {
+			final int rowCount = rows.get(tbl).size();
+			boolean id = idRequested.get(tbl);
+			int attrCount = attributes.get(tbl).size();
+			List<Attribute> tableAttributes = attributes.get(tbl);
+
+			int totalCount = id ? attrCount + 1 : attrCount ;
+			final String[] attrs = new String[totalCount];
+			final Type[] types = new Type[totalCount];
+			
+		 	if(id) { ///ugh ://
+				attrs[0] = schema.getTable(tbl).getIdAttribute();
+				types[0] = Type.STRING;
+			}
+			
+			for(int i = (id ? 1 : 0); i < totalCount ; i++) {
+				attrs[i] = tableAttributes.get(i - (id?1 : 0)).getName();
+				types[i] = Type.STRING;
+			}
+			
+			final List<String[]> rws = new ArrayList<String[]>();
+			for(Row r : rows.get(tbl)) {
+				String[] data = new String[totalCount];
+				for(int i = 0; i < totalCount ; i++) {
+					data[i] = r.getValue(i).toString();
+				}
+				rws.add(data);
+			}
+			
+			
+ 			QueryResult qr = new QueryResult() {
+				
+				@Override
+				public int getSize() {
+					return rowCount;
+				}
+				
+				@Override
+				public List<String[]> getData() {
+					return rws;
+				}
+				
+				@Override
+				public String[] getAttributes() {
+					return attrs;
+				}
+				
+				@Override
+				public Type[] getAttributeTypes() {
+					return types;
+				}
+			};
+			
+			List<QueryResult> qrs = new ArrayList<QueryResult>();
+			qrs.add(qr);
+			return qrs;
+			
 			
 		}
 		
 		
 		
 		
-		
 		return null;
 	} 
+	
+	private List<Row> getRowCollection(List<ValueCandidate> values, List<Attribute> attributes, boolean id) {
+		List<Row> rows = new ArrayList<Row>();
+		Map<String,String> valueMap = null;
+		
+		for(ValueCandidate vc : values) {
+			valueMap = vc.getValues();
+			Object[] rowValues = new Object[id ? valueMap.size()+1 : valueMap.size()];
+			if(id) {
+				rowValues[0] = vc.getSubject();
+			}
+			for(int i = ( id ? 1 : 0 )  ; i < rowValues.length ; i++) {
+				rowValues[i] = valueMap.get(attributes.get(i - (id?1 : 0)).getUri());
+			}
+			rows.add(new RowImple(rowValues));
+		}
+		
+		//create table out of it
+		return rows;
+	}
 	
 	private List<ValueCandidate> getValues(List<Attribute> attributes,
 			Boolean idReq, String entityUri) {

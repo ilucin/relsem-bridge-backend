@@ -32,7 +32,7 @@ public class RowImple implements Row {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i<values.length; i++) {
-            sb.append(values[i].toString() +"  ");
+            sb.append(values[i].toString() +" | ");
         }
         return sb.toString();
     }
