@@ -17,9 +17,11 @@ class SessionHandler implements Runnable {
 	private Socket server_;
 	private Sender sender_;
 	private Receiver receiver_;
+	private DataInputStream dataInputStream_;
 
 	public SessionHandler(Socket server) {
 		this.server_ = server;
+		//this.dataInputStream_ = dataInputStream;
 		try {
 			this.sender_ = new Sender(new DataOutputStream(
 					server_.getOutputStream()));
@@ -34,8 +36,8 @@ class SessionHandler implements Runnable {
 
 		try {
 			DataInputStream dataInputStream = new DataInputStream(
-					server_.getInputStream());
-
+				server_.getInputStream());
+			
 			MsgParser msgParser = new MsgParser();
 
 			// if (dataInputStream.available() > 0) {
@@ -108,6 +110,11 @@ class SessionHandler implements Runnable {
 			this.sender_.sendReadyForQueryMessage();
 			this.sender_.flush();
 
+			SessionHandler sessionHandler = new SessionHandler(server_);
+			Thread session = new Thread(sessionHandler);
+			session.start();
+			
+			
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
 			ioe.printStackTrace();

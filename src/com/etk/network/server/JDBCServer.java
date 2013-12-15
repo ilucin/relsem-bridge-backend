@@ -22,16 +22,15 @@ public class JDBCServer {
 			Socket server = socket.accept();
 				System.out.println("connection accepted");
 				ConnectionHandler connectionHandler = new ConnectionHandler(
-							server);
+							server,socket);
 					Thread connection = new Thread(connectionHandler);
 					connection.start();
 					
 					//Til here is ok, but suddenly boum
-					SessionHandler sessionHandler = new SessionHandler(server);
-					Thread session = new Thread(sessionHandler);
-					session.start();
-				
-			}
+					//SessionHandler sessionHandler = new SessionHandler(server);
+					//Thread session = new Thread(sessionHandler);
+					//session.start();
+				}
 
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
