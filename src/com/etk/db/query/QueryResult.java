@@ -2,6 +2,8 @@ package com.etk.db.query;
 
 import java.util.List;
 
+import com.etk.manager.schema.Type;
+
 /**
  * Created with IntelliJ IDEA.
  * User: mladen
@@ -10,7 +12,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface QueryResult {
-    public List<String> getAttributes();
-    public List<Class>   getAttributeTypes();
+    public String[] getAttributes();
+    public Type[]   getAttributeTypes();
     public int getSize();
+    public List<String[]> getData();
 }
