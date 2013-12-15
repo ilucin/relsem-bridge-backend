@@ -246,4 +246,11 @@ public class RemoteSourceRDF implements DataSource{
 	public List<String> getAvailableEndpoints(){
 		return null;
 	}
+
+	@Override
+	public List<Object> getEntityCandidates(String superClass, int limit,
+			int offset, boolean label) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
