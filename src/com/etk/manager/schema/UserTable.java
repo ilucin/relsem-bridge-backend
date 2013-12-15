@@ -15,9 +15,11 @@ public class UserTable {
     Map<String,Attribute> attributes;
     private String entityUri;
     private String entityLabel;
+    private String idAttribute;
 
-    public UserTable(String name, String entityUri, String entityLabel) {
-        this.tableName = name;
+    public UserTable(String name, String entityUri, String entityLabel,String idAttribute) {
+    	this.idAttribute = idAttribute;
+        this.tableName = name.toLowerCase();
         this.entityUri = entityUri;
         this.entityLabel = entityLabel;
         this.attributes = new HashMap<String,Attribute>();
@@ -46,4 +48,10 @@ public class UserTable {
     public String getEntityLabel() {
         return entityLabel;
     }
+
+	public String getIdAttribute() {
+		return idAttribute;
+	}
+    
+    
 }
