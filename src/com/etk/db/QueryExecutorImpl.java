@@ -110,9 +110,9 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		for(int i=0;i<attributes.size();i++) {
 			attrUris[i] = attributes.get(i).getUri();
 		}
-		Properties qProp = new Properties(20, 0, false);
+		Properties qProp = new Properties(20, 0, false,"",0,0);
 		List<ValueCandidate> vcs = new ArrayList<>();
-		for(Object o : this.dataSource.getValues(entityUri, attrUris, qProp)) {
+		for(Object o : this.dataSource.getValues(entityUri, attrUris, qProp,null)) {
 			vcs.add((ValueCandidate)o);
 		}
 		
