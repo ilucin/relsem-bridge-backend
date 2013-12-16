@@ -3,9 +3,7 @@ package com.etk.network.server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-
 
 public class ConnectionHandler implements Runnable {
 
@@ -13,13 +11,9 @@ public class ConnectionHandler implements Runnable {
 	private Sender sender_;
 	private Receiver receiver_;
 	private final String pass_ = "postgres";
-	private ServerSocket socket_;
-	
-	
-	
-	public ConnectionHandler(Socket server, ServerSocket socket) {
+
+	public ConnectionHandler(Socket server) {
 		this.server_ = server;
-		this.socket_ = socket;
 		try {
 			this.sender_ = new Sender(new DataOutputStream(
 					server_.getOutputStream()));
@@ -29,63 +23,41 @@ public class ConnectionHandler implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		this.receiver_.receiveAuthMessage();
 
-		
-		try {
-			DataInputStream dataInputStream = new DataInputStream(
-					server_.getInputStream());
+		// ask for the password
+		this.sender_
+				.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
+		this.sender_.flush();
 
-			MsgParser msgParser = new MsgParser();
+		String password = this.receiver_.getPassword();
+		System.out.println("Password: " + password);
 
-			this.receiver_.receiveAuthMessage();
+		if (!password.equals(this.pass_)) {
+			this.sender_.sendErrorResponse("Wrong Password!");
+			return;
+		}
 
-			// ask for the password
-			this.sender_
-					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
-			this.sender_.flush();
+		this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
+		this.sender_.sendServerVersionMessage();
+		this.sender_.sendReadyForQueryMessage();
+		this.sender_.flush();
 
-			String password = this.receiver_.getPassword();
-			System.out.println("Password: " + password);
+		// Socket server = socket_.accept();
+		// while(true){
+		// DataInputStream dataInputStreamSession = new DataInputStream(
+		// server_.getInputStream());
+		// SessionHandler sessionHandler = new SessionHandler(server_,
+		// dataInputStreamSession);
+		// Thread session = new Thread(sessionHandler);
+		// session.start();
+		// }
 
-			if (!password.equals(this.pass_)) {
-				this.sender_.sendErrorResponse("Wrong Password!");
-				return;
-			}
-
-			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
-			this.sender_.sendServerVersionMessage();
-			this.sender_.sendReadyForQueryMessage();
-			this.sender_.flush();
-			
-		
-				//Socket server = socket_.accept();
-//			while(true){
-//				DataInputStream dataInputStreamSession = new DataInputStream(
-//						server_.getInputStream());
-//				SessionHandler sessionHandler = new SessionHandler(server_, dataInputStreamSession);
-//				Thread session = new Thread(sessionHandler);
-//				session.start();
-//			}
-			
-			
-			
 		SessionHandler sessionHandler = new SessionHandler(server_);
 		Thread session = new Thread(sessionHandler);
 		session.start();
-	
-		
-		
-		} catch (IOException ioe) {
-			System.out.println("IOException on socket listen: " + ioe);
-			ioe.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
-
 }
