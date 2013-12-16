@@ -243,7 +243,7 @@ public class Sender {
 		for (int i = 0; i < in.length; i++) {
 			out[i] = in[i];
 		}
-		out[in.length] = 0;
+		out[in.length] = '\0';
 		return out;
 	}
 
@@ -255,10 +255,7 @@ public class Sender {
 			String param = "server_version";
 			String paramV = "9";
 
-			byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO
-														// BE
-			// NULTERMINATED EVEN THOUGH DOCS
-			// DONT MENTION IT
+			byte[] nameB = nullTerminateString(param);
 			byte[] valB = nullTerminateString(paramV);
 
 			this.dataOutputStream_.writeByte('S');
@@ -279,7 +276,6 @@ public class Sender {
 		try {
 			this.dataOutputStream_.writeByte('Z');
 			this.dataOutputStream_.writeInt(5);
-
 			this.dataOutputStream_.writeByte('I');
 		} catch (IOException e) {
 			System.out.println("Error in sendReadyForQueryMessage: ");
@@ -320,23 +316,17 @@ public class Sender {
 			// will always be zero.
 			short formatCode = 0;
 
+			int totalSize = 6;
+
 			// Null terminate all column names
 			for (int i = 0; i < columns.length; i++) {
 				String name = columns[i];
 				byte[] bName = nullTerminateString(name);
 				bNameList.add(bName);
+				totalSize += bName.length;
 			}
 
-			// FIXME: Why 8 and not 6?
-			int totalSize = 8;
-
-			// calculate lenght of the of the message
-			for (int i = 0; i < columns.length; i++) {
-				totalSize += bNameList.get(i).length;
-			}
-
-			// FIXME: Why 14 and not 18?
-			totalSize = totalSize + 14 * columns.length;
+			totalSize += 18 * columns.length;
 
 			this.dataOutputStream_.writeByte('T');
 			this.dataOutputStream_.writeInt(totalSize);
@@ -390,9 +380,9 @@ public class Sender {
 
 			// Sum the length of the column value
 			for (int i = 0; i < list.size(); i++) {
-				val = nullTerminateString(list.get(i));
+				val = list.get(i).getBytes();
 				lenColList.add(val.length);
-				bvalList.add(val);
+				bvalList.add(list.get(i).getBytes());
 				// lenght of the value + 4 bytes to communicate the value lenght
 				tLen += val.length + 4;
 			}
