@@ -3,11 +3,8 @@ package com.etk.network.server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.etk.db.DBMSExecutor;
@@ -17,7 +14,6 @@ class SessionHandler implements Runnable {
 	private Socket server_;
 	private Sender sender_;
 	private Receiver receiver_;
-	private DataInputStream dataInputStream_;
 
 	public SessionHandler(Socket server) {
 		this.server_ = server;
@@ -33,29 +29,9 @@ class SessionHandler implements Runnable {
 	}
 
 	public void run() {
-
 		try {
-			DataInputStream dataInputStream = new DataInputStream(
-				server_.getInputStream());
-			
-			MsgParser msgParser = new MsgParser();
-
-			// if (dataInputStream.available() > 0) {
-			byte type = dataInputStream.readByte();
-			int msgLength = dataInputStream.readInt();
-			// remove the terminator of the first empty string
-			dataInputStream.readByte();
-			System.out.println("Message Type: " + (char) type);
-			System.out.println("Lenght: " + msgLength);
-
-			// - 4 for the message lenght, - 1 for the terminator of the first
-			// string
-			// - 1 for the terminator of the first string, - 2 for the number of
-			// parameter
-			byte[] buf = new byte[msgLength - 4 - 1 - 1 - 2];
-			dataInputStream.read(buf);
-			String inputString = msgParser.parseMsg(buf);
-			System.out.println(inputString);
+			this.receiver_.getMessageType();
+			String query = this.receiver_.readParseMessage();
 
 			// InputStream is = new ByteArrayInputStream(
 			// inputString.getBytes("UTF-8"));
@@ -79,16 +55,14 @@ class SessionHandler implements Runnable {
 			 */
 
 			DBMSExecutor dbmsExecutor = new DBMSExecutor() {
-
 				@Override
 				public List<QueryResult> executeQuery(String sqlQuery) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 			};
 
 			List<QueryResult> queryResultList = dbmsExecutor
-					.executeQuery(inputString);
+					.executeQuery(query);
 
 			// getColumnNames from parser
 
@@ -113,16 +87,8 @@ class SessionHandler implements Runnable {
 			SessionHandler sessionHandler = new SessionHandler(server_);
 			Thread session = new Thread(sessionHandler);
 			session.start();
-			
-			
-		} catch (IOException ioe) {
-			System.out.println("IOException on socket listen: " + ioe);
-			ioe.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	
-	
+	}	
 }
