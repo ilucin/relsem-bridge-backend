@@ -6,11 +6,14 @@ import java.net.Socket;
 
 public class JDBCServer {
 
+	// TODO implement max number of connections?
 	private static int port = 5000;
 
-	// TODO implement max number of connections?
-
-	// Listen for incoming connections and handle them
+	/**
+	 * Listen for incoming connections and handle them
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		boolean connected_ = false;
@@ -19,18 +22,18 @@ public class JDBCServer {
 			ServerSocket socket = new ServerSocket(port);
 			System.out.println("server started!");
 			while (true) {
-			Socket server = socket.accept();
+				Socket server = socket.accept();
 				System.out.println("connection accepted");
 				ConnectionHandler connectionHandler = new ConnectionHandler(
-							server,socket);
-					Thread connection = new Thread(connectionHandler);
-					connection.start();
-					
-					//Til here is ok, but suddenly boum
-					//SessionHandler sessionHandler = new SessionHandler(server);
-					//Thread session = new Thread(sessionHandler);
-					//session.start();
-				}
+						server);
+				Thread connection = new Thread(connectionHandler);
+				connection.start();
+
+				// Til here is ok, but suddenly boum
+				// SessionHandler sessionHandler = new SessionHandler(server);
+				// Thread session = new Thread(sessionHandler);
+				// session.start();
+			}
 
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
