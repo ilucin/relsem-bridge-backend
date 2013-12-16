@@ -9,14 +9,14 @@ import java.util.Map;
 /**
  * Created by mladen on 11/9/13.
  */
-public class Table {
+public class UserTable {
 
     private String tableName; //mapping how?
     Map<String,Attribute> attributes;
     private String entityUri;
     private String entityLabel;
 
-    public Table(String name, String entityUri, String entityLabel) {
+    public UserTable(String name, String entityUri, String entityLabel) {
         this.tableName = name;
         this.entityUri = entityUri;
         this.entityLabel = entityLabel;

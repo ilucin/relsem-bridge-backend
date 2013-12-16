@@ -1,7 +1,7 @@
 package com.etk.manager;
 
 import com.etk.manager.schema.Schema;
-import com.etk.manager.schema.Table;
+import com.etk.manager.schema.UserTable;
 
 import java.util.HashMap;
 import java.util.List;
