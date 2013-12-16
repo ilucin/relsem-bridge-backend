@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by mladen on 11/9/13.
  */
 public class UserTable {
-
+//randcomment
     private String tableName; //mapping how?
     Map<String,Attribute> attributes;
     private String entityUri;
