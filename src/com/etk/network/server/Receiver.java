@@ -122,15 +122,18 @@ public class Receiver {
 	public String readParseMessage() {
 		try {
 			int msgLength = this.dataInputStream_.readInt();
-			// System.out.println("Lenght: " + msgLength);
-			// remove the terminator of the first empty string
-			this.dataInputStream_.readByte();
-			// - 4 for the message lenght, - 1 for the terminator of the
-			// first string, - 1 for the terminator of the first string, - 2 for
-			// the number of parameter
-			byte[] buf = new byte[msgLength - 4 - 1 - 1 - 2];
+			// - 4 for the message lenght
+			byte[] buf = new byte[msgLength - 4];
 			this.dataInputStream_.read(buf);
-			return this.parser_.parseMsg(buf);
+
+			byte delim = '\0';
+			ByteTokenizer bt = new ByteTokenizer(buf, delim);
+
+			System.out.println(bt.countTokens());
+			// from now on useless things like timezone, to print comment out
+			// following lines
+			// while (bt.hasMoreTokens())
+			// System.out.println(this.parser_.parseMsg(bt.nexToken()));
 		} catch (IOException e) {
 			System.out.println("Error in readParseMessage: ");
 			e.printStackTrace();
