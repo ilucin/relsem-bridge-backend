@@ -129,7 +129,6 @@ public class Receiver {
 			byte delim = '\0';
 			ByteTokenizer bt = new ByteTokenizer(buf, delim);
 
-			System.out.println(bt.countTokens());
 			// from now on useless things like timezone, to print comment out
 			// following lines
 			// while (bt.hasMoreTokens())
