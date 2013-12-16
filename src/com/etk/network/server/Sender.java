@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Sender {
@@ -375,22 +376,22 @@ public class Sender {
 
 	/**
 	 * 
-	 * @param list
+	 * @param values
 	 */
-	public void sendDataRow(List<String> list) {
+	public void sendDataRow(String[] values) {
 		try {
 			// 4 bytes to communicate the lenght of the message + 2 bytes for
 			// the
 			// column numbers = 6
 			int tLen = 6;
-			short num = (short) list.size();
+			short num = (short) values.length;
 			LinkedList<Integer> lenColList = new LinkedList<Integer>();
 			LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
 			byte[] val;
 
 			// Sum the length of the column value
-			for (int i = 0; i < list.size(); i++) {
-				val = nullTerminateString(list.get(i));
+			for (int i = 0; i < values.length; i++) {
+				val = nullTerminateString(values[i]);
 				lenColList.add(val.length);
 				bvalList.add(val);
 				// lenght of the value + 4 bytes to communicate the value lenght
@@ -403,11 +404,11 @@ public class Sender {
 
 			// for each value, send 4 bytes for the value lenght and n bytes for
 			// the value itself
-			for (int i = 0; i < list.size(); i++) {
+			for (int i = 0; i < values.length; i++) {
 				this.dataOutputStream_.writeInt(lenColList.get(i));
 
 				this.dataOutputStream_.writeBytes(new String(
-						nullTerminateString(list.get(i))));
+						nullTerminateString(values[i])));
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");

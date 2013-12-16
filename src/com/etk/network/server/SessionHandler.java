@@ -1,8 +1,10 @@
 package com.etk.network.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -11,7 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.etk.db.DBMSExecutor;
+import com.etk.db.exceptions.RelsemDBException;
 import com.etk.db.query.QueryResult;
+import com.etk.manager.schema.Type;
+import com.etk.parser.SelectObject;
+import com.etk.parser.SelectQueryToObject;
 
 class SessionHandler implements Runnable {
 	private Socket server_;
@@ -21,7 +27,7 @@ class SessionHandler implements Runnable {
 
 	public SessionHandler(Socket server) {
 		this.server_ = server;
-		//this.dataInputStream_ = dataInputStream;
+		// this.dataInputStream_ = dataInputStream;
 		try {
 			this.sender_ = new Sender(new DataOutputStream(
 					server_.getOutputStream()));
@@ -36,8 +42,8 @@ class SessionHandler implements Runnable {
 
 		try {
 			DataInputStream dataInputStream = new DataInputStream(
-				server_.getInputStream());
-			
+					server_.getInputStream());
+
 			MsgParser msgParser = new MsgParser();
 
 			// if (dataInputStream.available() > 0) {
@@ -57,10 +63,10 @@ class SessionHandler implements Runnable {
 			String inputString = msgParser.parseMsg(buf);
 			System.out.println(inputString);
 
-			// InputStream is = new ByteArrayInputStream(
-			// inputString.getBytes("UTF-8"));
-			// SelectQueryToObject transform = new SelectQueryToObject(is);
-			// SelectObject selectObject = transform.getSelectObject();
+			InputStream is = new ByteArrayInputStream(
+					inputString.getBytes("UTF-8"));
+			SelectQueryToObject transform = new SelectQueryToObject(is);
+			SelectObject selectObject = transform.getSelectObject();
 			//
 			// System.out.println("Parser found tables: "
 			// + selectObject.getTableNames().toString()
@@ -81,18 +87,22 @@ class SessionHandler implements Runnable {
 			DBMSExecutor dbmsExecutor = new DBMSExecutor() {
 
 				@Override
-				public List<QueryResult> executeQuery(String sqlQuery) {
+				public List<QueryResult> executeQuery(SelectObject selectObject)
+						throws RelsemDBException {
 					// TODO Auto-generated method stub
 					return null;
 				}
 			};
 
 			List<QueryResult> queryResultList = dbmsExecutor
-					.executeQuery(inputString);
+					.executeQuery(selectObject);
 
 			// getColumnNames from parser
 
-			String[] columns = { "name", "surname" };
+			Type[] types = queryResultList.get(0).getAttributeTypes();
+			String[] columns = queryResultList.get(0).getAttributes();
+
+			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(columns);
 
 			// for (int i = 0; i < queryResultList.size(); i++) {
@@ -101,10 +111,17 @@ class SessionHandler implements Runnable {
 			// this.sender_.flush();
 			// }
 
-			List<String> values = new ArrayList<String>();
-			values.add("david");
-			values.add("riobo");
-			this.sender_.sendDataRow(values);
+			for (int i = 0; i < queryResultList.get(0).getData().size(); i++) {
+
+				String[] values = queryResultList.get(0).getData().get(i);
+				this.sender_.sendDataRow(values);
+
+			}
+
+			// List<String> values = new ArrayList<String>();
+			// values.add("david");
+			// values.add("riobo");
+			// this.sender_.sendDataRow(values);
 
 			this.sender_.sendCommandCompleteMessage();
 			this.sender_.sendReadyForQueryMessage();
@@ -113,8 +130,7 @@ class SessionHandler implements Runnable {
 			SessionHandler sessionHandler = new SessionHandler(server_);
 			Thread session = new Thread(sessionHandler);
 			session.start();
-			
-			
+
 		} catch (IOException ioe) {
 			System.out.println("IOException on socket listen: " + ioe);
 			ioe.printStackTrace();
@@ -123,6 +139,4 @@ class SessionHandler implements Runnable {
 		}
 	}
 
-	
-	
 }
