@@ -5,7 +5,6 @@ import com.etk.db.query.QueryResult;
 
 import java.util.List;
 
-import tests.QueryResultTest;
 
 /**
  * Created with IntelliJ IDEA.
