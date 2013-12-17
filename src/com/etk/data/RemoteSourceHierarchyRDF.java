@@ -25,21 +25,28 @@ public class RemoteSourceHierarchyRDF implements DataSource{
 	String queryStringTemplate;
 	String defaultDataSetName;
 	
-	public RemoteSourceHierarchyRDF( String service, String defaultDataSetName ){
+	public RemoteSourceHierarchyRDF( String service ){
 		this.service = service;
-		this.defaultDataSetName = defaultDataSetName;
+		this.defaultDataSetName = null;
 		queryStringTemplate = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 					  		  "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
-					  		  "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> " + 
-					  		  "PREFIX fn: <http://www.w3.org/2005/xpath-functions#>";
+					  		  "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ";
+	}
+	
+	public RemoteSourceHierarchyRDF( String service, String defaultDataSetName ){
+		this(service);
+		this.defaultDataSetName = defaultDataSetName;
 	}
 	
 	
 	@Override
 	public List<Object> getEntityCandidates(Properties queryProperties) {
 		String queryString = queryStringTemplate;
-		queryString += "SELECT DISTINCT (count(?o) as ?num) ?o FROM <" + defaultDataSetName + "> " +
-				  	   "WHERE { ";
+		queryString += "SELECT DISTINCT (count(?o) as ?num) ?o ";
+		if(defaultDataSetName != null){
+			queryString += "FROM <" + defaultDataSetName + "> ";
+		}
+		queryString += "WHERE { ";
 		
   	    if( queryProperties.getEntitySuperClass() != null ){
   	    	queryString += "?o rdfs:subClassOf{" + queryProperties.getDepthFrom() + "," + 
@@ -60,7 +67,7 @@ public class RemoteSourceHierarchyRDF implements DataSource{
 		if( queryProperties.getOffset() != 0 ){
 			queryString += " OFFSET " + Integer.toString( queryProperties.getOffset() );
 		}
-				
+		System.out.println(queryString);
 		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
@@ -84,10 +91,13 @@ public class RemoteSourceHierarchyRDF implements DataSource{
 	@Override
 	public List<Object> getAttributes(String entity, Properties queryProperties) {
 		String queryString = queryStringTemplate;
-		queryString += "Select (count(?p) as ?num) ?p FROM <" + defaultDataSetName + "> " +
-					   " WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
-					   " ?s ?p ?o." + 
-					   " ?p a rdf:Property.}";
+		queryString += "Select (count(?p) as ?num) ?p ";
+		if(defaultDataSetName != null){
+			queryString += "FROM <" + defaultDataSetName + "> ";
+		}
+		queryString += " WHERE { ?s rdf:type/rdfs:subClassOf* <" + entity + ">." +
+				   	   " ?s ?p ?o." + 
+				       " ?p a rdf:Property.}";
 		
 		//Add group by and order by
 		queryString += "group by ?p order by desc(?num) ";
@@ -179,7 +189,7 @@ public class RemoteSourceHierarchyRDF implements DataSource{
 							    ")" + operatorInner + one.getValue() + ") ";
 				}
 				else{
-					toAppend += "fn:matches(" + variableForAttribute(attributes, one.getAttribute()) +
+					toAppend += "regex(" + variableForAttribute(attributes, one.getAttribute()) +
 								"," + regexFromLike(one.getValue().toString())  + "))";
 					
 				}
