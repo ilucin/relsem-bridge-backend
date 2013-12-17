@@ -31,7 +31,7 @@ public class Receiver {
 	public String getUsername() {
 		return this.username_;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -52,7 +52,7 @@ public class Receiver {
 			byte[] buf = new byte[msgLength - 4];
 			this.dataInputStream_.read(buf);
 			byte delim = 0;
-			ByteTokenizer bt = new ByteTokenizer(buf , delim);
+			ByteTokenizer bt = new ByteTokenizer(buf, delim);
 			return this.parser_.parseMsg(bt.nexToken());
 		} catch (IOException e) {
 			System.out.println("Error in getPassword: ");
@@ -131,13 +131,13 @@ public class Receiver {
 
 			// from now on useless things like timezone, to print comment out
 			// following lines
-			// while (bt.hasMoreTokens())
-			// System.out.println(this.parser_.parseMsg(bt.nexToken()));
+			
+				return this.parser_.parseMsg(bt.nexToken());
 		} catch (IOException e) {
 			System.out.println("Error in readParseMessage: ");
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	private class MsgParser {

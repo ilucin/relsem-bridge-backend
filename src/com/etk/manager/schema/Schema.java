@@ -19,6 +19,10 @@ public class Schema {
         this.tables = new HashMap<String, UserTable>();
     }
 
+    public boolean hasTable(String tableName) {
+    	return tables.containsKey(tableName);
+    }
+    
     public Collection<UserTable> getTables() {
         return tables.values();
     }

@@ -9,23 +9,35 @@ import java.util.ArrayList;
  * Time: 21:17
  * To change this template use File | Settings | File Templates.
  */
-public class SelectObject {
-    ArrayList<String> columnNames;
-    ArrayList<String> tableNames;
+public class SelectObject implements ParserInterface {
+    private ArrayList<String> noPrefColNames;
+    private ArrayList<ProjectionCell> prefColNames;
+    private ArrayList<String> tableNames;
 
     public SelectObject(){
 
     }
 
-    public void addColumnName(String columnName){
-        if(columnNames == null){
-            columnNames = new ArrayList<String>();
+    public void addFreeColumnName(String noPrefColName){
+        if(noPrefColNames == null){
+            noPrefColNames = new ArrayList<String>();
         }
-        this.columnNames.add(columnName);
+        this.noPrefColNames.add(noPrefColName);
     }
 
-    public ArrayList<String> getColumnNames(){
-        return this.columnNames;
+    public ArrayList<String> getNoPrefColNames(){
+        return this.noPrefColNames;
+    }
+
+    public void addPrefColNames(ProjectionCell prefColName) {
+        if(prefColNames == null){
+            prefColNames = new ArrayList<ProjectionCell>();
+        }
+        this.prefColNames.add(prefColName);
+    }
+
+    public ArrayList<ProjectionCell> getPrefColNames() {
+        return prefColNames;
     }
 
     public void addTableName(String tableName){

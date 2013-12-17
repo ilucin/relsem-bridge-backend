@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
+
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.FileInputStream;
@@ -37,14 +38,21 @@ public class SelectQueryToObject extends SELECTBaseListener {
         }
 
     }
-    public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
-        selectObject.addColumnName(ctx.columnName().getText());
+
+    @Override public void exitColumnInTable(@NotNull SELECTParser.ColumnInTableContext ctx) {
+        String tableName = ctx.tableName().getText();
+        String columnName = ctx.columnName().getText();
+        ProjectionCell projectionCell = new ProjectionCell(tableName, columnName);
+        selectObject.addPrefColNames(projectionCell);
+    }
+   /* public void exitDerivedColumn(@NotNull SELECTParser.DerivedColumnContext ctx) {
+        selectObject.addFreeColumnName(ctx.columnName().getText());
     }
 
     public void enterTablePrimary(@NotNull SELECTParser.TablePrimaryContext ctx) {
         selectObject.addTableName(ctx.tableName().getText());
     }
-
+    */
     public SelectObject getSelectObject(){
         return this.selectObject;
     }

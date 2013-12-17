@@ -3,6 +3,8 @@ package com.etk.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import sun.misc.Regexp;
+
 import com.etk.data.query.Expression;
 import com.etk.data.query.Operator;
 import com.etk.data.query.OperatorMapping;
@@ -16,13 +18,14 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.reasoner.rulesys.builtins.Regex;
 
-public class RemoteSourceRDF implements DataSource{
+public class RemoteSourceHierarchyRDF implements DataSource{
 	String service;
 	String queryStringTemplate;
 	String defaultDataSetName;
 	
-	public RemoteSourceRDF( String service, String defaultDataSetName ){
+	public RemoteSourceHierarchyRDF( String service, String defaultDataSetName ){
 		this.service = service;
 		this.defaultDataSetName = defaultDataSetName;
 		queryStringTemplate = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
@@ -31,25 +34,22 @@ public class RemoteSourceRDF implements DataSource{
 					  		  "PREFIX fn: <http://www.w3.org/2005/xpath-functions#>";
 	}
 	
+	
 	@Override
 	public List<Object> getEntityCandidates(Properties queryProperties) {
 		String queryString = queryStringTemplate;
-		queryString += "SELECT (COUNT(?o) as ?num) ?o WHERE { ?s a ?o. ";
-
-		// Checks should the sparql query ask for a rdfs:label
-		// This should be used only if you are sure that there is a predicate
-		// rdfs:label in the data source
-		if( queryProperties.isLabel() ){
-			queryString += "?o rdfs:label ?label. " + 
-                           "FILTER (lang(?label) = 'en' || lang(?label) = '') ";
-		}
+		queryString += "SELECT DISTINCT (count(?o) as ?num) ?o FROM <" + defaultDataSetName + "> " +
+				  	   "WHERE { ";
 		
-		queryString += "}";
-		/* For now I will disable order by, because it is very slow
-		if( limit != 0 && offset != 0 ){
-			queryString += " ORDER BY ?o";
-		}
-		*/
+  	    if( queryProperties.getEntitySuperClass() != null ){
+  	    	queryString += "?o rdfs:subClassOf{" + queryProperties.getDepthFrom() + "," + 
+  	    				   queryProperties.getDepthTo() + "} " +
+  	    				   "<" + queryProperties.getEntitySuperClass() + ">. }";
+  	    }
+  	    else{
+  	    	queryString += "?s rdfs:subClassOf ?o. " +
+					   	   "FILTER NOT EXISTS { ?o rdfs:subClassOf ?o2 }. }";
+  	    }  	   
 		
 		//Add order by and sort by
 		queryString += " GROUP BY ?o ORDER BY DESC(?num)";
@@ -60,11 +60,8 @@ public class RemoteSourceRDF implements DataSource{
 		if( queryProperties.getOffset() != 0 ){
 			queryString += " OFFSET " + Integer.toString( queryProperties.getOffset() );
 		}
-		
-		
-		
-		System.out.println(queryString);		
-		Query query = QueryFactory.create(queryString);
+				
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
     	QueryExecution queryExecution = QueryExecutionFactory.createServiceRequest(
     											service, query );
     	ResultSet resultSet = queryExecution.execSelect();
@@ -72,25 +69,15 @@ public class RemoteSourceRDF implements DataSource{
 		return entityCandidatesFromRS(resultSet, queryProperties.isLabel());
 	}
 	
+	
 	private List<Object> entityCandidatesFromRS(ResultSet resultSet, boolean label){
 		List<Object> entityCandidates = new ArrayList<Object>();
 		
 		QuerySolution qs;
-		if( label ){
-			while( resultSet.hasNext() ){
-	 			qs = resultSet.next();
-				entityCandidates.add( new EntityCandidate(qs.get("o").toString(), qs.get("label").toString()) );
-			}
+		while( resultSet.hasNext() ){
+ 			qs = resultSet.next();
+			entityCandidates.add( new EntityCandidate(qs.get("o").toString()) );
 		}
-		else{
-			while( resultSet.hasNext() ){
-	 			qs = resultSet.next();
-				entityCandidates.add( new EntityCandidate(qs.get("o").toString()) );
-			}
-		}
- 		
-		
-		
 		return entityCandidates;
 	}
 
