@@ -7,6 +7,7 @@ public class Properties {
 	private String entitySuperClass;
 	private int depthFrom;
 	private int depthTo;
+	private boolean sort;
 
 	public Properties(int limit, int offset, boolean label,
 			String entitySuperClass, int depthFrom, int depthTo) {
@@ -69,6 +70,14 @@ public class Properties {
 
 	public void setDepthTo(int depthTo) {
 		this.depthTo = depthTo;
+	}
+
+	public boolean isSort() {
+		return sort;
+	}
+
+	public void setSort(boolean sort) {
+		this.sort = sort;
 	}
 	
 	
