@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import mock.MockedSchema;
+
 import com.etk.db.DBMSExecutor;
 import com.etk.db.QueryExecutorImpl;
 import com.etk.db.exceptions.RelsemDBException;
@@ -67,7 +69,7 @@ class SessionHandler implements Runnable {
 			 */
 
 			User user = new User("marko");
-			Schema schema = new Schema(user);
+			Schema schema = new MockedSchema(user);
 
 			DBMSExecutor qExec = new QueryExecutorImpl(schema);
 
