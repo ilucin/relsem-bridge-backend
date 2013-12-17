@@ -6,14 +6,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 import mock.MockedSchema;
 
 import com.etk.db.DBMSExecutor;
 import com.etk.db.QueryExecutorImpl;
-import com.etk.db.exceptions.RelsemDBException;
 import com.etk.db.query.QueryResult;
 import com.etk.manager.User;
 import com.etk.manager.schema.Schema;
