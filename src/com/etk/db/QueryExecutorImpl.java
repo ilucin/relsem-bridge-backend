@@ -201,7 +201,7 @@ public class QueryExecutorImpl implements DBMSExecutor {
 			attrUris[i] = attributes.get(i).getUri();
 		}
 		Properties qProp = new Properties(20, 0, false,"",0,0);
-		List<ValueCandidate> vcs = new ArrayList<>();
+		List<ValueCandidate> vcs = new ArrayList<ValueCandidate>();
 		for(Object o : this.dataSource.getValues(entityUri, attrUris, qProp,null)) {
 			vcs.add((ValueCandidate)o);
 		}
@@ -231,7 +231,7 @@ public class QueryExecutorImpl implements DBMSExecutor {
 		return true;
 	}
 
-	//random comment
+	
 }
 
 
