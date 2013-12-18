@@ -26,7 +26,11 @@ public class ConnectionHandler implements Runnable {
 
 	@Override
 	public void run() {
-		this.receiver_.receiveAuthMessage();
+		if(!this.receiver_.receiveAuthMessage()){
+			this.sender_.sendWeDontManageSSL();
+			this.sender_.flush();
+			this.receiver_.receiveAuthMessage();
+		}
 
 		// ask for the password
 		this.sender_
