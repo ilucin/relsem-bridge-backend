@@ -16,12 +16,13 @@ public class Sender {
 	public static enum AuthEnum {
 		AuthOK, KerberosV5Required, ClearTextPasswordRequired, MD5EncryptedPasswordRequired
 	}
+
 	private DataOutputStream dataOutputStream_;
 
 	public Sender(DataOutputStream output) {
 		this.dataOutputStream_ = output;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -33,7 +34,7 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -47,7 +48,7 @@ public class Sender {
 		}
 
 	}
-	
+
 	/**
 	 * send an error message to the client
 	 * 
@@ -73,7 +74,7 @@ public class Sender {
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -299,14 +300,14 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param row
 	 */
 	public void sendRowDescription(QueryResult row) {
 		try {
-			short fieldsNo = (short)row.getAttributes().length;
+			short fieldsNo = (short) row.getAttributes().length;
 			LinkedList<byte[]> bNameList = new LinkedList<byte[]>();
 			// If the field can be identified as a column of a specific table,
 			// the
@@ -351,7 +352,7 @@ public class Sender {
 				this.dataOutputStream_.writeBytes(new String(bNameList.get(i)));
 				this.dataOutputStream_.writeInt(identificator);
 				this.dataOutputStream_.writeShort(identificatorAtr);
-				switch(typeIndList.get(i)){
+				switch (typeIndList.get(i)) {
 				case STRING:
 					typeLen = -1;
 					typeInd = 25;
@@ -366,7 +367,7 @@ public class Sender {
 					break;
 				}
 				this.dataOutputStream_.writeInt(typeInd);
-                this.dataOutputStream_.writeShort(typeLen);
+				this.dataOutputStream_.writeShort(typeLen);
 				this.dataOutputStream_.writeInt(typeMod);
 				this.dataOutputStream_.writeShort(formatCode);
 			}
@@ -375,7 +376,7 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param columns
@@ -498,51 +499,50 @@ public class Sender {
 		}
 	}
 
-	
-	public void sendDataRow(QueryResult row){
+	public void sendDataRow(QueryResult row) {
 		try {
 			// 4 bytes to communicate the lenght of the message + 2 bytes for
 			// the
 			// column numbers = 6
-			for(int i=0; i < row.getData().size(); i++){
-			
-			int tLen = 6;
-			short num = (short) row.getData().get(i).length;
-			LinkedList<Integer> lenColList = new LinkedList<Integer>();
-			LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
-			byte[] val;
+			for (int i = 0; i < row.getData().size(); i++) {
 
-			// Sum the length of the column value
-			for (int j = 0; j < row.getData().get(i).length; j++) {
-				val = row.getData().get(i)[j].getBytes();
-				lenColList.add(val.length);
-				bvalList.add(row.getData().get(i)[j].getBytes());
-				// lenght of the value + 4 bytes to communicate the value lenght
-				tLen += val.length + 4;
-			}
+				int tLen = 6;
+				short num = (short) row.getData().get(i).length;
+				LinkedList<Integer> lenColList = new LinkedList<Integer>();
+				LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
+				byte[] val;
 
-			this.dataOutputStream_.writeByte('D');
-			this.dataOutputStream_.writeInt(tLen);
-			this.dataOutputStream_.writeShort(num);
+				// Sum the length of the column value
+				for (int j = 0; j < row.getData().get(i).length; j++) {
+					val = row.getData().get(i)[j].getBytes();
+					lenColList.add(val.length);
+					bvalList.add(row.getData().get(i)[j].getBytes());
+					// lenght of the value + 4 bytes to communicate the value
+					// lenght
+					tLen += val.length + 4;
+				}
 
-			// for each value, send 4 bytes for the value lenght and n bytes for
-			// the value itself
-			for (int j = 0; j < row.getData().get(i).length; j++) {
-				this.dataOutputStream_.writeInt(lenColList.get(j));
+				this.dataOutputStream_.writeByte('D');
+				this.dataOutputStream_.writeInt(tLen);
+				this.dataOutputStream_.writeShort(num);
 
-				this.dataOutputStream_.writeBytes(new String(
-						nullTerminateString(row.getData().get(i)[j])));
-			}
+				// for each value, send 4 bytes for the value lenght and n bytes
+				// for
+				// the value itself
+				for (int j = 0; j < row.getData().get(i).length; j++) {
+					this.dataOutputStream_.writeInt(lenColList.get(j));
+
+					this.dataOutputStream_.writeBytes(new String(
+							nullTerminateString(row.getData().get(i)[j])));
+				}
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");
 			e.printStackTrace();
 		}
-		
-		
+
 	}
-	
-	
+
 	/**
 	 * 
 	 */

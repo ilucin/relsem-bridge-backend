@@ -84,7 +84,7 @@ class SessionHandler implements Runnable {
 
 			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(queryResultList.get(0));
-			this.sender_.sendDataRow(queryResultList.get(0));
+			this.sender_.sendDataRow(queryResultList.get(0).getData().get(0));
 			// for (int i = 0; i < queryResultList.size(); i++) {
 			// QueryResult queryResult = queryResultList.get(i);
 			// this.sender_.sendDataRow(queryResult.getAttributes());
