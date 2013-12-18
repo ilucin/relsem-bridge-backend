@@ -132,12 +132,10 @@ public interface SELECTListener extends ParseTreeListener {
 	 * Enter a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
 	 * @param ctx the parse tree
 	 */
-	void enterTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
 	 * @param ctx the parse tree
 	 */
-	void exitTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link SELECTParser#derivedColumnList}.

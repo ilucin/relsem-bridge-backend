@@ -159,13 +159,11 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -432,13 +430,11 @@ public class SELECTBaseListener implements SELECTListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

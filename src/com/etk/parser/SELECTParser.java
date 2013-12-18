@@ -1103,11 +1103,9 @@ public class SELECTParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_booleanPrimary; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).enterBooleanPrimary(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SELECTListener ) ((SELECTListener)listener).exitBooleanPrimary(this);
 		}
 	}
 

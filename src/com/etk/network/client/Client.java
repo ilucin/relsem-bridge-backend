@@ -37,7 +37,7 @@ public class Client {
 
 			try {
 				option = Integer.parseInt(br_.readLine());
-			} catch (IOException e1) {
+			} catch (NumberFormatException | IOException e1) {
 			}
 
 			switch (option) {
@@ -79,12 +79,18 @@ public class Client {
 		try {
 			Statement st = conn.createStatement();
 			// the syntax for FROM is schema.table
-			ResultSet rs = st.executeQuery("SELECT a.d, a.c, b.d FROM a, b");
+			ResultSet rs = st.executeQuery(query);
+			
+			// getColumnNames from parser
+
+			String[] columns = { "host", "award" };
+			
+			
+			int i=0;
 			while (rs.next()) {
-				String name = rs.getString("name");
-				System.out.println(name);
-				String surname = rs.getString("surname");
-				System.out.println(surname);
+				String value = rs.getString(columns[i]);
+				System.out.println(value);
+				i++;
 				// Date date = rs.getDate("date");
 				// System.out.println(date.toString());
 
@@ -92,9 +98,11 @@ public class Client {
 			rs.close();
 			st.close();
 		} catch (SQLException se) {
-			System.err.println("Threw a SQLException.");
+			// System.err.println("Threw a SQLException.");
+			// System.err.println(se.getErrorCode());
+			System.err.println("An error occurred:");
 			System.err.println(se.getMessage());
-			se.printStackTrace();
+			//se.printStackTrace();
 		}
 	}
 

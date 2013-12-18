@@ -2,15 +2,36 @@ package com.etk.network.server;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.etk.db.query.QueryResult;
+import com.etk.manager.schema.Type;
+
+
 public class Sender {
+
+	public static enum AuthEnum {
+		AuthOK, KerberosV5Required, ClearTextPasswordRequired, MD5EncryptedPasswordRequired
+	}
 
 	private DataOutputStream dataOutputStream_;
 
 	public Sender(DataOutputStream output) {
 		this.dataOutputStream_ = output;
+	}
+
+	/**
+	 * 
+	 */
+	public void sendWeDontManageSSL() {
+		try {
+			this.dataOutputStream_.writeByte('N');
+		} catch (IOException e) {
+			System.out.println("Error in sendParseCompleteMessage: ");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -26,7 +47,7 @@ public class Sender {
 		}
 
 	}
-	
+
 	/**
 	 * send an error message to the client
 	 * 
@@ -42,13 +63,17 @@ public class Sender {
 			// http://www.postgresql.org/docs/9.3/static/protocol-error-fields.html
 			this.dataOutputStream_.writeByte('S');
 			this.dataOutputStream_.write(temp);
+			// an error message is always followed by a "ready for query"
+			// message. I put the call to this method here so we can manage the
+			// sendErrorResponse method "transparently"
+			this.sendReadyForQueryMessage();
 		} catch (IOException e) {
 			System.out.println("Error in sendErrorResponse: ");
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -235,7 +260,7 @@ public class Sender {
 		for (int i = 0; i < in.length; i++) {
 			out[i] = in[i];
 		}
-		out[in.length] = 0;
+		out[in.length] = '\0';
 		return out;
 	}
 
@@ -247,10 +272,7 @@ public class Sender {
 			String param = "server_version";
 			String paramV = "9";
 
-			byte[] nameB = nullTerminateString(param); // PEACE OF SHIT NEEDS TO
-														// BE
-			// NULTERMINATED EVEN THOUGH DOCS
-			// DONT MENTION IT
+			byte[] nameB = nullTerminateString(param);
 			byte[] valB = nullTerminateString(paramV);
 
 			this.dataOutputStream_.writeByte('S');
@@ -271,10 +293,85 @@ public class Sender {
 		try {
 			this.dataOutputStream_.writeByte('Z');
 			this.dataOutputStream_.writeInt(5);
-
 			this.dataOutputStream_.writeByte('I');
 		} catch (IOException e) {
 			System.out.println("Error in sendReadyForQueryMessage: ");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param row
+	 */
+	public void sendRowDescription(QueryResult row) {
+		try {
+			short fieldsNo = (short) row.getAttributes().length;
+			LinkedList<byte[]> bNameList = new LinkedList<byte[]>();
+			// If the field can be identified as a column of a specific table,
+			// the
+			// object ID of the table; otherwise zero.
+			int identificator = 0;
+			// If the field can be identified as a column of a specific table,
+			// the
+			// attribute number of the column; otherwise zero.
+			short identificatorAtr = 0;
+			// The object ID of the field's data type.
+			List<Type> typeIndList = new ArrayList<Type>();
+			// The type modifier (see pg_attribute.atttypmod). The meaning of
+			// the
+			// modifier is type-specific.
+			int typeMod = -1;
+			// The format code being used for the field. Currently will be zero
+			// (text) or one (binary). In a RowDescription returned from the
+			// statement variant of Describe, the format code is not yet known
+			// and
+			// will always be zero.
+			short formatCode = 0;
+
+			int totalSize = 6;
+
+			// Null terminate all column names
+			for (int i = 0; i < row.getAttributeTypes().length; i++) {
+				typeIndList.add(row.getAttributeTypes()[i]);
+				byte[] bName = nullTerminateString(row.getAttributes()[i]);
+				bNameList.add(bName);
+				totalSize += bName.length;
+			}
+
+			totalSize += 18 * row.getAttributeTypes().length;
+
+			this.dataOutputStream_.writeByte('T');
+			this.dataOutputStream_.writeInt(totalSize);
+			this.dataOutputStream_.writeShort(fieldsNo);
+
+			short typeLen = 0;
+			int typeInd = 0;
+			for (int i = 0; i < row.getAttributeTypes().length; i++) {
+				this.dataOutputStream_.writeBytes(new String(bNameList.get(i)));
+				this.dataOutputStream_.writeInt(identificator);
+				this.dataOutputStream_.writeShort(identificatorAtr);
+				switch (typeIndList.get(i)) {
+				case STRING:
+					typeLen = -1;
+					typeInd = 25;
+					break;
+				case INT:
+					typeLen = 4;
+					typeInd = 23;
+					break;
+				case REAL:
+					typeLen = 4;
+					typeInd = 23;
+					break;
+				}
+				this.dataOutputStream_.writeInt(typeInd);
+				this.dataOutputStream_.writeShort(typeLen);
+				this.dataOutputStream_.writeInt(typeMod);
+				this.dataOutputStream_.writeShort(formatCode);
+			}
+		} catch (IOException e) {
+			System.out.println("Error in sendRowDescription: ");
 			e.printStackTrace();
 		}
 	}
@@ -312,23 +409,17 @@ public class Sender {
 			// will always be zero.
 			short formatCode = 0;
 
+			int totalSize = 6;
+
 			// Null terminate all column names
 			for (int i = 0; i < columns.length; i++) {
 				String name = columns[i];
 				byte[] bName = nullTerminateString(name);
 				bNameList.add(bName);
+				totalSize += bName.length;
 			}
 
-			// FIXME: Why 8 and not 6?
-			int totalSize = 8;
-
-			// calculate lenght of the of the message
-			for (int i = 0; i < columns.length; i++) {
-				totalSize += bNameList.get(i).length;
-			}
-
-			// FIXME: Why 14 and not 18?
-			totalSize = totalSize + 14 * columns.length;
+			totalSize += 18 * columns.length;
 
 			this.dataOutputStream_.writeByte('T');
 			this.dataOutputStream_.writeInt(totalSize);
@@ -367,24 +458,24 @@ public class Sender {
 
 	/**
 	 * 
-	 * @param list
+	 * @param values
 	 */
-	public void sendDataRow(List<String> list) {
+	public void sendDataRow(String[] values) {
 		try {
 			// 4 bytes to communicate the lenght of the message + 2 bytes for
 			// the
 			// column numbers = 6
 			int tLen = 6;
-			short num = (short) list.size();
+			short num = (short) values.length;
 			LinkedList<Integer> lenColList = new LinkedList<Integer>();
 			LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
 			byte[] val;
 
 			// Sum the length of the column value
-			for (int i = 0; i < list.size(); i++) {
-				val = nullTerminateString(list.get(i));
+			for (int i = 0; i < values.length; i++) {
+				val = values[i].getBytes();
 				lenColList.add(val.length);
-				bvalList.add(val);
+				bvalList.add(values[i].getBytes());
 				// lenght of the value + 4 bytes to communicate the value lenght
 				tLen += val.length + 4;
 			}
@@ -395,16 +486,58 @@ public class Sender {
 
 			// for each value, send 4 bytes for the value lenght and n bytes for
 			// the value itself
-			for (int i = 0; i < list.size(); i++) {
+			for (int i = 0; i < values.length; i++) {
 				this.dataOutputStream_.writeInt(lenColList.get(i));
-
-				this.dataOutputStream_.writeBytes(new String(
-						nullTerminateString(list.get(i))));
+				this.dataOutputStream_.writeBytes(values[i]);
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");
 			e.printStackTrace();
 		}
+	}
+
+	public void sendDataRow(QueryResult row) {
+		try {
+			// 4 bytes to communicate the lenght of the message + 2 bytes for
+			// the
+			// column numbers = 6
+			for (int i = 0; i < row.getData().size(); i++) {
+
+				int tLen = 6;
+				short num = (short) row.getData().get(i).length;
+				LinkedList<Integer> lenColList = new LinkedList<Integer>();
+				LinkedList<byte[]> bvalList = new LinkedList<byte[]>();
+				byte[] val;
+
+				// Sum the length of the column value
+				for (int j = 0; j < row.getData().get(i).length; j++) {
+					val = row.getData().get(i)[j].getBytes();
+					lenColList.add(val.length);
+					bvalList.add(row.getData().get(i)[j].getBytes());
+					// lenght of the value + 4 bytes to communicate the value
+					// lenght
+					tLen += val.length + 4;
+				}
+
+				this.dataOutputStream_.writeByte('D');
+				this.dataOutputStream_.writeInt(tLen);
+				this.dataOutputStream_.writeShort(num);
+
+				// for each value, send 4 bytes for the value lenght and n bytes
+				// for
+				// the value itself
+				for (int j = 0; j < row.getData().get(i).length; j++) {
+					this.dataOutputStream_.writeInt(lenColList.get(j));
+
+					this.dataOutputStream_.writeBytes(new String(
+							nullTerminateString(row.getData().get(i)[j])));
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Error in sendDataRow: ");
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -421,12 +554,33 @@ public class Sender {
 
 	/**
 	 * 
+	 * @param authMessage
 	 */
-	public void sendAuthenticationOkMessage() {
+	public void sendAuthenticationOkMessage(AuthEnum authMessage) {
 		try {
 			this.dataOutputStream_.writeByte('R');
-			this.dataOutputStream_.writeInt(8);
-			this.dataOutputStream_.writeInt(0);
+			switch (authMessage) {
+			case AuthOK:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(0);
+				break;
+			case KerberosV5Required:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(2);
+				break;
+			case ClearTextPasswordRequired:
+				this.dataOutputStream_.writeInt(8);
+				this.dataOutputStream_.writeInt(3);
+				break;
+			case MD5EncryptedPasswordRequired:
+				/*
+				 * needs to implement a salt for the password, we can use
+				 * something like: final Random r = new SecureRandom(); byte[]
+				 * salt = new byte[4]; r.nextBytes(salt); // String encodedSalt
+				 * = Base64.encodeBase64String(salt);
+				 */
+				throw new IllegalStateException();
+			}
 		} catch (IOException e) {
 			System.out.println("Error in sendAuthenticationOkMessage: ");
 			e.printStackTrace();
