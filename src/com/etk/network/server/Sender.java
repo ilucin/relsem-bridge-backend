@@ -489,9 +489,7 @@ public class Sender {
 			// the value itself
 			for (int i = 0; i < values.length; i++) {
 				this.dataOutputStream_.writeInt(lenColList.get(i));
-
-				this.dataOutputStream_.writeBytes(new String(
-						nullTerminateString(values[i])));
+				this.dataOutputStream_.writeBytes(values[i]);
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");
