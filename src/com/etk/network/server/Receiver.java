@@ -139,15 +139,19 @@ public class Receiver {
 			int msgLength = this.dataInputStream_.readInt();
 			// - 4 for the message lenght
 			byte[] buf = new byte[msgLength - 4];
-			this.dataInputStream_.read(buf);
+			if (this.dataInputStream_.read(buf) > 0) {
+				byte delim = '\0';
+				ByteTokenizer bt = new ByteTokenizer(buf, delim);
 
-			byte delim = '\0';
-			ByteTokenizer bt = new ByteTokenizer(buf, delim);
-
-			// from now on useless things like timezone, to print comment out
-			// following lines
-			
-				return this.parser_.parseMsg(bt.nexToken());
+				// from now on useless things like timezone, to print comment
+				// out
+				// following lines
+				try {
+					return this.parser_.parseMsg(bt.nexToken());
+				} catch (Exception e) {
+				}
+			}
+			return "no query";
 		} catch (IOException e) {
 			System.out.println("Error in readParseMessage: ");
 			e.printStackTrace();
