@@ -12,18 +12,22 @@ import java.util.Map;
  */
 public class Schema {
     private User owner;
-    private Map<String, Table> tables;
+    private Map<String, UserTable> tables;
 
     public Schema(User owner) {
         this.owner = owner;
-        this.tables = new HashMap<String, Table>();
+        this.tables = new HashMap<String, UserTable>();
     }
 
-    public Collection<Table> getTables() {
+    public boolean hasTable(String tableName) {
+    	return tables.containsKey(tableName);
+    }
+    
+    public Collection<UserTable> getTables() {
         return tables.values();
     }
 
-    public void addTable(Table table) {
+    public void addTable(UserTable table) {
         this.tables.put(table.getTableName(),table);
     }
 
@@ -31,7 +35,7 @@ public class Schema {
         this.tables.remove(table);
     }
 
-    public Table getTable(String name) {
+    public UserTable getTable(String name) {
         return tables.get(name);
     }
 

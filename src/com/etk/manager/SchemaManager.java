@@ -1,11 +1,13 @@
 package com.etk.manager;
 
 import com.etk.manager.schema.Schema;
-import com.etk.manager.schema.Table;
+import com.etk.manager.schema.UserTable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mock.MockedSchema;
 
 /**
  * Created by mladen on 11/9/13.
@@ -20,7 +22,9 @@ public class SchemaManager {
     }
 
     public void createSchema(User user) {
-        schemas.put(user,new Schema(user));
+        Schema newSchema = new MockedSchema(user);
+    	schemas.put(user,newSchema);
+        
     }
 
     public Schema getSchema(User user) {

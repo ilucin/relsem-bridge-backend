@@ -57,7 +57,7 @@ public class Attribute {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public void setType(Type type) {
@@ -114,5 +114,11 @@ public class Attribute {
 
         }
     }
+    
+    @Override
+    public String toString() {
+    	return "[ attr " + name + "]";
+    }
+    
 }
 

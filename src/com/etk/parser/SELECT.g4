@@ -3,16 +3,22 @@ grammar SELECT;
 selectStmnt :
 	'SELECT' querySpecification ;
 querySpecification:
-	(setQuantifier)? selectList tableExpression ;
+	(setQuantifier)? selectList tableExpression (resultExpression)? ;
 setQuantifier :
 	'DISTINCT'
 	| 'ALL' ;
 
 selectList:
 	'*'
-	| derivedColumn (',' derivedColumn)* ;
+	| column (',' column)* ;
 
-derivedColumn:
+column:
+    columnInTable
+    | freeColumn;
+
+columnInTable:
+    tableName'.'columnName;
+freeColumn:
 	columnName (asClause)? ;
 
 asClause:
@@ -64,15 +70,64 @@ truthValue :
 	| 'UNKNOWN' ;
 
 booleanPrimary :
-	//predicate
 	 booleanPredicand ;
 
-booleanPredicand :
-	parenthizedBooleanValueExpression
-	;
+booleanPredicand:
+     parenthesizedBoolValueExpr
+     ;
 
-parenthizedBooleanValueExpression :
+parenthesizedBoolValueExpr :
     '(' booleanValueExpression ')' ;
+
+resultExpression:
+    joinClause;
+
+joinClause:
+    crossJoin
+    | qualifiedJoin
+    | naturalJoin
+    | unionJoin;
+
+crossJoin:
+    'CROSS JOIN' tableName  ;
+
+qualifiedJoin:
+    joinType 'JOIN' tableName joinSpec  ;
+
+naturalJoin:
+    'NATURAL' joinType 'JOIN' tableName ;
+
+unionJoin:
+    'UNION JOIN' tableName ;
+
+joinType:
+    'INNER'
+    | outerJoinType ('OUTER')? ;
+
+outerJoinType:
+    'LEFT'
+    | 'RIGHT'
+    | 'FULL' ;
+
+joinSpec:
+    joinCondition
+    | namedColumnsJoin ;
+
+joinCondition:
+    'ON' searchCondition ;
+
+namedColumnsJoin:
+    'USING' '(' columnNameList ')' ;
+
+columnNameList:
+    columnName (',' columnName)* ;
+
+
+
+
+
+
+
 
 
 
