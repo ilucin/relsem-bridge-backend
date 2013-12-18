@@ -83,7 +83,7 @@ public class Client {
 			
 			// getColumnNames from parser
 
-			String[] columns = { "name", "surname" };
+			String[] columns = { "host", "award" };
 			
 			
 			int i=0;
