@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.List;
 
+import mock.MockSelectObject;
 import mock.MockedSchema;
 
 import com.etk.db.DBMSExecutor;
@@ -41,9 +42,9 @@ class SessionHandler implements Runnable {
 			this.receiver_.getMessageType();
 			String query = this.receiver_.readParseMessage();
 			System.out.println(query);
-			InputStream is = new ByteArrayInputStream(query.getBytes("UTF-8"));
-			SelectQueryToObject transform = new SelectQueryToObject(is);
-			SelectObject selectObject = transform.getSelectObject();
+			//InputStream is = new ByteArrayInputStream(query.getBytes("UTF-8"));
+			//SelectQueryToObject transform = new SelectQueryToObject(is);
+			//SelectObject selectObject = transform.getSelectObject();
 
 			// InputStream is = new ByteArrayInputStream(
 			// inputString.getBytes("UTF-8"));
@@ -66,6 +67,8 @@ class SessionHandler implements Runnable {
 			 * dataOutputStream.flush();
 			 */
 
+			SelectObject selectObject = new MockSelectObject();
+			
 			User user = new User("marko");
 			Schema schema = new MockedSchema(user);
 
@@ -81,19 +84,14 @@ class SessionHandler implements Runnable {
 
 			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(queryResultList.get(0));
-
+			this.sender_.sendDataRow(queryResultList.get(0));
 			// for (int i = 0; i < queryResultList.size(); i++) {
 			// QueryResult queryResult = queryResultList.get(i);
 			// this.sender_.sendDataRow(queryResult.getAttributes());
 			// this.sender_.flush();
 			// }
 
-			for (int i = 0; i < queryResultList.get(0).getData().size(); i++) {
-
-				String[] values = queryResultList.get(0).getData().get(i);
-				this.sender_.sendDataRow(values);
-
-			}
+			
 
 			// List<String> values = new ArrayList<String>();
 			// values.add("david");
