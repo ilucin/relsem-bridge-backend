@@ -41,6 +41,7 @@ class SessionHandler implements Runnable {
 		try {
 			this.receiver_.getMessageType();
 			String query = this.receiver_.readParseMessage();
+			query = query.substring(0, query.length()-1);
 			System.out.println(query);
 			// InputStream is = new
 			// ByteArrayInputStream(query.getBytes("UTF-8"));
@@ -57,8 +58,6 @@ class SessionHandler implements Runnable {
 			// + "\nParser found columns: "
 			// + selectObject.getColumnNames().toString());
 
-			// InputStream is = new
-			// ByteArrayInputStream(inputString.getBytes("UTF-8"));
 			// SELECTMain.parse(is);
 
 			/*
@@ -68,8 +67,13 @@ class SessionHandler implements Runnable {
 			 * dataOutputStream.flush();
 			 */
 
+			//InputStream is = new ByteArrayInputStream(query.getBytes("UTF-8"));
+			//SelectQueryToObject selectQueryToObject = new SelectQueryToObject(
+			//		is);
+			//SelectObject selectObject = selectQueryToObject.getSelectObject();
+			
 			SelectObject selectObject = new MockSelectObject();
-
+			
 			User user = new User("marko");
 			Schema schema = new MockedSchema(user);
 
@@ -86,11 +90,9 @@ class SessionHandler implements Runnable {
 			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(queryResultList.get(0));
 
-			for (int i = 0; i < queryResultList.get(0).getSize(); i++) {
+			for (int i = 0; i < 14 ; i++) {
 				this.sender_.sendDataRow(queryResultList.get(0).getData()
 						.get(i));
-				if (i % 13 == 0)
-					sender_.flush();
 			}
 
 			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(0));
