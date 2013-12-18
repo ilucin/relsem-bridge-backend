@@ -61,8 +61,20 @@ public class JoinTable implements RowCollection {
 
     @Override
     public Collection<Row> getRows() {
-
-        return null;
+        System.out.println("SRANJE!");
+        List<Row> retList = new ArrayList<Row>();
+        for(Joint j : joints) {
+            Object[] rowData = new Object[joinedAttributeIndices.size()];
+            for(String attrLeft: leftTable.getAttributes()) {
+                rowData[joinedAttributeIndices.get(attrLeft)] = j.leftRow.getValue(leftTable.getAttributeIndex(attrLeft));
+            }
+            for(String attrRight: rightTable.getAttributes()) {
+                rowData[joinedAttributeIndices.get(attrRight)] = j.rightRow.getValue(rightTable.getAttributeIndex(attrRight));
+            }
+            rowData[joinedAttributeIndices.get(joinAttribute)] = j.leftRow.getValue(leftTable.getAttributeIndex(joinAttribute));
+            retList.add(new RowImple(rowData));
+        }
+        return retList;
         //reconstruct rows from joints
     }
 
@@ -71,10 +83,6 @@ public class JoinTable implements RowCollection {
         return joinedAttributeIndices.keySet();
     }
 
-    @Override
-    public int getSize() {
-        return joints.size();
-    }
 
     @Override
     public Class getType(String attribute) {
@@ -83,7 +91,7 @@ public class JoinTable implements RowCollection {
 
     @Override
     public int getAttributeIndex(String attribute) {
-            return getAttributeIndex(attribute);
+            return joinedAttributeIndices.get(attribute.toUpperCase());
     }
 
     private class Joint {

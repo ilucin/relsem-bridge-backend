@@ -1,5 +1,6 @@
 package com.etk.db;
 
+import com.etk.db.exceptions.RelsemDBException;
 import com.etk.db.query.QueryResult;
 
 import java.util.List;
@@ -12,6 +13,6 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface DBMSExecutor {
-    public List<QueryResult> executeQuery(String sqlQuery);
+    public List<QueryResult> executeQuery(String sqlQuery) throws RelsemDBException;
 
 }

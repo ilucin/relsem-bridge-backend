@@ -36,10 +36,6 @@ public class Table implements RowCollection {
         return attributePositions.keySet();
     }
 
-    @Override
-    public int getSize() {
-        return rows.size();
-    }
 
     @Override
     public Class getType(String attribute) {
@@ -48,7 +44,7 @@ public class Table implements RowCollection {
 
     @Override
     public int getAttributeIndex(String attribute) {
-        return attributePositions.get(attribute);
+        return attributePositions.get(attribute.toUpperCase());
     }
 
     @Override
