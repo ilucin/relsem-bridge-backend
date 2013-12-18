@@ -296,7 +296,83 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 
+	 * @param row
+	 */
+	public void sendRowDescription(QueryResult row) {
+		try {
+			short fieldsNo = (short)row.getSize();
+			LinkedList<byte[]> bNameList = new LinkedList<byte[]>();
+			// If the field can be identified as a column of a specific table,
+			// the
+			// object ID of the table; otherwise zero.
+			int identificator = 0;
+			// If the field can be identified as a column of a specific table,
+			// the
+			// attribute number of the column; otherwise zero.
+			short identificatorAtr = 0;
+			// The object ID of the field's data type.
+			List<Type> typeIndList = new ArrayList<Type>();
+			// The type modifier (see pg_attribute.atttypmod). The meaning of
+			// the
+			// modifier is type-specific.
+			int typeMod = -1;
+			// The format code being used for the field. Currently will be zero
+			// (text) or one (binary). In a RowDescription returned from the
+			// statement variant of Describe, the format code is not yet known
+			// and
+			// will always be zero.
+			short formatCode = 0;
 
+			int totalSize = 6;
+
+			// Null terminate all column names
+			for (int i = 0; i < row.getSize(); i++) {
+				typeIndList.add(row.getAttributeTypes()[i]);
+				byte[] bName = nullTerminateString(row.getAttributes()[i]);
+				bNameList.add(bName);
+				totalSize += bName.length;
+			}
+
+			totalSize += 18 * row.getSize();
+
+			this.dataOutputStream_.writeByte('T');
+			this.dataOutputStream_.writeInt(totalSize);
+			this.dataOutputStream_.writeShort(fieldsNo);
+
+			short typeLen = 0;
+			int typeInd = 0;
+			for (int i = 0; i < row.getSize(); i++) {
+				this.dataOutputStream_.writeBytes(new String(bNameList.get(i)));
+				this.dataOutputStream_.writeInt(identificator);
+				this.dataOutputStream_.writeShort(identificatorAtr);
+				switch(typeIndList.get(i)){
+				case STRING:
+					typeLen = -1;
+					typeInd = 25;
+					break;
+				case INT:
+					typeLen = 4;
+					typeInd = 23;
+					break;
+				case REAL:
+					typeLen = 4;
+					typeInd = 23;
+					break;
+				}
+				this.dataOutputStream_.writeInt(typeInd);
+                this.dataOutputStream_.writeShort(typeLen);
+				this.dataOutputStream_.writeInt(typeMod);
+				this.dataOutputStream_.writeShort(formatCode);
+			}
+		} catch (IOException e) {
+			System.out.println("Error in sendRowDescription: ");
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 
 	 * @param columns
