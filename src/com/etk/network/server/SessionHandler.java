@@ -42,9 +42,10 @@ class SessionHandler implements Runnable {
 			this.receiver_.getMessageType();
 			String query = this.receiver_.readParseMessage();
 			System.out.println(query);
-			//InputStream is = new ByteArrayInputStream(query.getBytes("UTF-8"));
-			//SelectQueryToObject transform = new SelectQueryToObject(is);
-			//SelectObject selectObject = transform.getSelectObject();
+			// InputStream is = new
+			// ByteArrayInputStream(query.getBytes("UTF-8"));
+			// SelectQueryToObject transform = new SelectQueryToObject(is);
+			// SelectObject selectObject = transform.getSelectObject();
 
 			// InputStream is = new ByteArrayInputStream(
 			// inputString.getBytes("UTF-8"));
@@ -68,7 +69,7 @@ class SessionHandler implements Runnable {
 			 */
 
 			SelectObject selectObject = new MockSelectObject();
-			
+
 			User user = new User("marko");
 			Schema schema = new MockedSchema(user);
 
@@ -80,18 +81,32 @@ class SessionHandler implements Runnable {
 			// getColumnNames from parser
 
 			// Type[] types = queryResultList.get(0).getAttributeTypes();
-			//String[] columns = queryResultList.get(0).getAttributes();
+			// String[] columns = queryResultList.get(0).getAttributes();
 
 			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(queryResultList.get(0));
-			this.sender_.sendDataRow(queryResultList.get(0).getData().get(0));
+
+			for (int i = 0; i < queryResultList.get(0).getSize(); i++) {
+				this.sender_.sendDataRow(queryResultList.get(0).getData()
+						.get(i));
+				if (i % 13 == 0)
+					sender_.flush();
+			}
+
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(0));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(1));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(2));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(3));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(4));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(5));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(6));
+			// this.sender_.sendDataRow(queryResultList.get(0).getData().get(7));
+
 			// for (int i = 0; i < queryResultList.size(); i++) {
 			// QueryResult queryResult = queryResultList.get(i);
 			// this.sender_.sendDataRow(queryResult.getAttributes());
 			// this.sender_.flush();
 			// }
-
-			
 
 			// List<String> values = new ArrayList<String>();
 			// values.add("david");
