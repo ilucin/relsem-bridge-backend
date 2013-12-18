@@ -77,10 +77,10 @@ class SessionHandler implements Runnable {
 			// getColumnNames from parser
 
 			// Type[] types = queryResultList.get(0).getAttributeTypes();
-			String[] columns = queryResultList.get(0).getAttributes();
+			//String[] columns = queryResultList.get(0).getAttributes();
 
 			// String[] columns = { "name", "surname" };
-			this.sender_.sendRowDescription(columns);
+			this.sender_.sendRowDescription(queryResultList.get(0));
 
 			// for (int i = 0; i < queryResultList.size(); i++) {
 			// QueryResult queryResult = queryResultList.get(i);
