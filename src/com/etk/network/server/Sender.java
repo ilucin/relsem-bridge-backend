@@ -18,7 +18,19 @@ public class Sender {
 	public Sender(DataOutputStream output) {
 		this.dataOutputStream_ = output;
 	}
-
+	
+	/**
+	 * 
+	 */
+	public void sendWeDontManageSSL() {
+		try {
+			this.dataOutputStream_.writeByte('N');
+		} catch (IOException e) {
+			System.out.println("Error in sendParseCompleteMessage: ");
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 
 	 */
