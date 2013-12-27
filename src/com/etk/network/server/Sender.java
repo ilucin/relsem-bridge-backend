@@ -11,6 +11,12 @@ import com.etk.manager.schema.Type;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+/**
+ * Helper class to send well defined messages
+ * 
+ * @author Michele
+ * 
+ */
 public class Sender {
 
 	public static enum AuthEnum {
@@ -24,7 +30,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Tell the client that we don't manage SSL authentication
 	 */
 	public void sendWeDontManageSSL() {
 		try {
@@ -36,7 +42,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Tell the client that the parsing is completed
 	 */
 	public void sendParseCompleteMessage() {
 		try {
@@ -50,7 +56,7 @@ public class Sender {
 	}
 
 	/**
-	 * send an error message to the client
+	 * send a custom error message to the client
 	 * 
 	 * @param error
 	 *            the error to report to the client
@@ -302,8 +308,10 @@ public class Sender {
 	}
 
 	/**
+	 * Tell the client how rows are composed
 	 * 
 	 * @param row
+	 *            An example of one dataRow
 	 */
 	public void sendRowDescription(QueryResult row) {
 		try {
@@ -378,8 +386,10 @@ public class Sender {
 	}
 
 	/**
+	 * Tell the client how rows are composed
 	 * 
 	 * @param columns
+	 *            An array of all the columns that compose one DataRow
 	 */
 	public void sendRowDescription(String[] columns) {
 		try {
@@ -443,7 +453,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Tell the client that the server has finished to executed the command
 	 */
 	public void sendCommandCompleteMessage() {
 		try {
@@ -458,8 +468,10 @@ public class Sender {
 	}
 
 	/**
+	 * Send a message to the client transmitting one datarow
 	 * 
 	 * @param values
+	 *            the values of one DataRow
 	 */
 	public void sendDataRow(String[] values) {
 		try {
@@ -496,7 +508,13 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Send a message to the client transmitting one datarow
+	 * 
+	 * @param row
+	 *            The DataRow to transmit
+	 */
 	public void sendDataRow(QueryResult row) {
 		try {
 			// 4 bytes to communicate the lenght of the message + 2 bytes for
@@ -542,7 +560,9 @@ public class Sender {
 	}
 
 	/**
+	 * Call DataOutputStream.flush() handling the exception if any
 	 * 
+	 * @see java.io.DataOutputStream#flush()
 	 */
 	public void flush() {
 		try {
@@ -554,8 +574,10 @@ public class Sender {
 	}
 
 	/**
+	 * Send a message to the client regarding the authentication
 	 * 
 	 * @param authMessage
+	 *            The type of message to send
 	 */
 	public void sendAuthenticationOkMessage(AuthEnum authMessage) {
 		try {
@@ -589,7 +611,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Tell the client that the bind is completed
 	 */
 	public void sendBindCompleteMessage() {
 		try {
@@ -602,7 +624,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
+	 * Tell the client that an empty query string was recognized.
 	 */
 	public void sendEmptyQueryResponseMessage() {
 		try {
@@ -615,8 +637,7 @@ public class Sender {
 	}
 
 	/**
-	 * 
-	 * @throws IOException
+	 * Send a message to terminate the communication
 	 */
 	public void sendTerminateMessage() {
 		try {
