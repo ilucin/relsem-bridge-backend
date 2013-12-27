@@ -3,6 +3,12 @@ package com.etk.network.server;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
+/**
+ * A byte-grained tokenizer
+ * 
+ * @author Michele
+ *
+ */
 public class ByteTokenizer implements Enumeration<byte[]> {
 
 	private int currentPosition;
