@@ -32,7 +32,9 @@ class SessionHandler implements Runnable {
 			this.receiver_ = new Receiver(new DataInputStream(
 					server_.getInputStream()));
 		} catch (IOException e) {
+			System.out.println("Error getting streams: ");
 			e.printStackTrace();
+			return;
 		}
 	}
 
@@ -41,11 +43,9 @@ class SessionHandler implements Runnable {
 			char type = this.receiver_.getMessageType();
 			System.out.println(type);
 			
-			
 			if (type == 'Q' || type == 'P'){
 
-				String query = this.receiver_.readParseMessage();
-				query = query.substring(0, query.length() - 1);
+				String query = this.receiver_.readQueryMessage();
 				System.out.println(query);
 				// InputStream is = new
 				// ByteArrayInputStream(query.getBytes("UTF-8"));
