@@ -20,48 +20,49 @@ public class ConnectionHandler implements Runnable {
 			this.receiver_ = new Receiver(new DataInputStream(
 					server_.getInputStream()));
 		} catch (IOException e) {
+			System.out.println("Error getting streams: ");
 			e.printStackTrace();
+			return;
 		}
 	}
 
 	@Override
 	public void run() {
-		if(!this.receiver_.receiveAuthMessage()){
-			this.sender_.sendWeDontManageSSL();
+		try {
+			if (!this.receiver_.receiveAuthMessage()) {
+				this.sender_.sendWeDontManageSSL();
+				this.sender_.flush();
+				this.receiver_.receiveAuthMessage();
+			}
+
+			// ask for the password
+			this.sender_
+					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
 			this.sender_.flush();
-			this.receiver_.receiveAuthMessage();
-		}
 
-		// ask for the password
-		this.sender_
-				.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
-		this.sender_.flush();
+			String password = this.receiver_.getPassword();
+			// System.out.println("Password: " + password);
 
-		String password = this.receiver_.getPassword();
-		System.out.println("Password: " + password);
+			if (password != null && !password.equals(this.pass_)) {
+				this.sender_.sendErrorResponse("Wrong Password!");
+				this.sender_.flush();
+				return;
+			}
 
-		if (!password.equals(this.pass_)) {
-			this.sender_.sendErrorResponse("Wrong Password!");
+			this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
+			this.sender_.sendServerVersionMessage();
+			this.sender_.sendReadyForQueryMessage();
+			this.sender_.flush();
+
+			SessionHandler sessionHandler = new SessionHandler(server_);
+			Thread session = new Thread(sessionHandler);
+			session.start();
+		} catch (IOException e) {
+			this.sender_
+					.sendErrorResponse("Error in the authentication procedure!");
+			this.sender_.flush();
+			e.printStackTrace();
 			return;
 		}
-
-		this.sender_.sendAuthenticationOkMessage(Sender.AuthEnum.AuthOK);
-		this.sender_.sendServerVersionMessage();
-		this.sender_.sendReadyForQueryMessage();
-		this.sender_.flush();
-
-		// Socket server = socket_.accept();
-		// while(true){
-		// DataInputStream dataInputStreamSession = new DataInputStream(
-		// server_.getInputStream());
-		// SessionHandler sessionHandler = new SessionHandler(server_,
-		// dataInputStreamSession);
-		// Thread session = new Thread(sessionHandler);
-		// session.start();
-		// }
-
-		SessionHandler sessionHandler = new SessionHandler(server_);
-		Thread session = new Thread(sessionHandler);
-		session.start();
 	}
 }
