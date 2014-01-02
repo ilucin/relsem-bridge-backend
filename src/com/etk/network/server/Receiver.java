@@ -2,9 +2,6 @@ package com.etk.network.server;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Helper class to receive well known kind of messages
@@ -70,8 +67,8 @@ public class Receiver {
 		} catch (IOException e) {
 			System.out.println("Error in getPassword: ");
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -87,62 +84,61 @@ public class Receiver {
 	 * 
 	 * @return false if the client required an SSL connection or if an exception
 	 *         is thrown. True otherwise
+	 * @throws IOException
+	 *             the stream has been closed and the contained input stream
+	 *             does not support reading after close, or another I/O error
+	 *             occurs.
 	 */
-	public boolean receiveAuthMessage() {
-		try {
-			int msgLen = dataInputStream_.readInt();
-			if (msgLen == 8) {
-				// THIS MEANS IT IS AN SSL REQUEST
-				// the following line is only to empty the inputStream
-				dataInputStream_.readInt();
-				return false;
-			} else {
-				this.protocolMajorVersion_ = dataInputStream_.readShort();
-				this.protocolMinorVersion_ = dataInputStream_.readShort();
-				// System.out.println('v' + protocolMajorVersion_ + '.' +
-				// protocolMinorVersion_);
-
-				// -4 for message lenght, -2 for the protocolMajorVersion_, -2
-				// for the protocolMinorVersion_
-				byte[] buf = new byte[msgLen - 4 - 2 - 2];
-				this.dataInputStream_.read(buf);
-
-				// System.out.println("message: " + this.parser_.parseMsg(buf));
-
-				byte delim = 0;
-				ByteTokenizer bt = new ByteTokenizer(buf, delim);
-
-				// "user" string
-				bt.nexToken();
-				this.username_ = this.parser_.parseMsg(bt.nexToken());
-				// "database" string
-				bt.nexToken();
-				this.dbName_ = this.parser_.parseMsg(bt.nexToken());
-				// from now on useless things like timezone, to print uncomment
-				// the
-				// following lines
-				// while (bt.hasMoreTokens())
-				// System.out.println(this.parser_.parseMsg(bt.nexToken()));
-				return true;
-			}
-		} catch (Exception e) {
-			System.out.println("Error in receiveAuthMessage: ");
-			e.printStackTrace();
+	public boolean receiveAuthMessage() throws IOException {
+		int msgLen = dataInputStream_.readInt();
+		if (msgLen == 8) {
+			// THIS MEANS IT IS AN SSL REQUEST
+			// the following line is only to empty the inputStream
+			dataInputStream_.readInt();
 			return false;
+		} else {
+			this.protocolMajorVersion_ = dataInputStream_.readShort();
+			this.protocolMinorVersion_ = dataInputStream_.readShort();
+			// System.out.println('v' + protocolMajorVersion_ + '.' +
+			// protocolMinorVersion_);
+
+			// -4 for message lenght, -2 for the protocolMajorVersion_, -2
+			// for the protocolMinorVersion_
+			byte[] buf = new byte[msgLen - 4 - 2 - 2];
+			this.dataInputStream_.read(buf);
+
+			// System.out.println("message: " + this.parser_.parseMsg(buf));
+
+			byte delim = 0;
+			ByteTokenizer bt = new ByteTokenizer(buf, delim);
+
+			// "user" string
+			bt.nexToken();
+			this.username_ = this.parser_.parseMsg(bt.nexToken());
+			// "database" string
+			bt.nexToken();
+			this.dbName_ = this.parser_.parseMsg(bt.nexToken());
+			// from now on useless things like timezone, to print uncomment
+			// the
+			// following lines
+			// while (bt.hasMoreTokens())
+			// System.out.println(this.parser_.parseMsg(bt.nexToken()));
+			return true;
 		}
 	}
 
 	/**
 	 * Understand which kind of message it is
 	 * 
-	 * @return the char that represent the type of the message
+	 * @return the char that represent the type of the message, the char 'e'
+	 *         otherwise
 	 */
 	public char getMessageType() {
 		try {
 			return (char) this.dataInputStream_.readByte();
 		} catch (Exception e) {
+			return 'e';
 		}
-		return 'e';
 	}
 
 	/**
