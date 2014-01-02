@@ -455,10 +455,11 @@ public class Sender {
 	/**
 	 * Tell the client that the server has finished to executed the command
 	 */
-	public void sendCommandCompleteMessage() {
+	public void sendCommandCompleteMessage(int rows) {
 		try {
 			this.dataOutputStream_.writeByte('C');
-			byte[] tmp = this.nullTerminateString("SELECT 1");
+			String tmpString = "SELECT " + String.valueOf(rows);
+			byte[] tmp = this.nullTerminateString(tmpString);
 			this.dataOutputStream_.writeInt(4 + tmp.length);
 			this.dataOutputStream_.write(tmp);
 		} catch (IOException e) {

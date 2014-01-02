@@ -90,7 +90,7 @@ class SessionHandler implements Runnable {
 			// String[] columns = { "name", "surname" };
 			this.sender_.sendRowDescription(queryResultList.get(0));
 
-			for (int i = 0; i < 14 ; i++) {
+			for (int i = 0; i < queryResultList.get(0).getData().size() ; i++) {
 				this.sender_.sendDataRow(queryResultList.get(0).getData()
 						.get(i));
 			}
@@ -115,7 +115,7 @@ class SessionHandler implements Runnable {
 			// values.add("riobo");
 			// this.sender_.sendDataRow(values);
 
-			this.sender_.sendCommandCompleteMessage();
+			this.sender_.sendCommandCompleteMessage(queryResultList.get(0).getData().size());
 			this.sender_.sendReadyForQueryMessage();
 			this.sender_.flush();
 
