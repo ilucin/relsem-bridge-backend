@@ -118,9 +118,8 @@ public class Receiver {
 			// "database" string
 			bt.nexToken();
 			this.dbName_ = this.parser_.parseMsg(bt.nexToken());
-			// from now on useless things like timezone, to print uncomment
-			// the
-			// following lines
+			// from now on useless things like timezone, to print uncomment the
+			// following 2 lines:
 			// while (bt.hasMoreTokens())
 			// System.out.println(this.parser_.parseMsg(bt.nexToken()));
 			return true;
@@ -142,6 +141,39 @@ public class Receiver {
 	}
 
 	/**
+	 * Recognize a query request
+	 * 
+	 * @return The string representing the query iff the message is correct.
+	 *         Null otherwise
+	 */
+	public String readQueryMessage() {
+		try {
+			int msgLength = this.dataInputStream_.readInt();
+			// - 4 for the message lenght
+			byte[] buf = new byte[msgLength - 4];
+			if (this.dataInputStream_.read(buf) > 0) {
+				byte delim = '\0';
+				ByteTokenizer bt = new ByteTokenizer(buf, delim);
+				try {
+					String returnValue = this.parser_.parseMsg(bt.nexToken());
+					// remove useless final characters
+					while (returnValue.endsWith("\n")
+							|| returnValue.endsWith(";"))
+						returnValue = returnValue.substring(0,
+								returnValue.length() - 1);
+					return returnValue;
+				} catch (Exception e) {
+				}
+			}
+			return null;
+		} catch (IOException e) {
+			System.out.println("Error in readQueryMessage: ");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
 	 * Recognize a request to parse a query
 	 * 
 	 * @return The string representing the query iff the message is correct.
@@ -155,12 +187,20 @@ public class Receiver {
 			if (this.dataInputStream_.read(buf) > 0) {
 				byte delim = '\0';
 				ByteTokenizer bt = new ByteTokenizer(buf, delim);
-
-				// from now on useless things like timezone, to print comment
-				// out
-				// following lines
 				try {
-					return this.parser_.parseMsg(bt.nexToken());
+					String returnValue = this.parser_.parseMsg(bt.nexToken());
+					// remove useless final characters
+					while (returnValue.endsWith("\n")
+							|| returnValue.endsWith(";"))
+						returnValue = returnValue.substring(0,
+								returnValue.length() - 1);
+					return returnValue;
+					// TODO:
+					// from now on the number of parameter data types specified
+					// (can be zero) and for each parameter the object ID of the
+					// parameter data type
+					// while (bt.hasMoreTokens())
+					// System.out.println(this.parser_.parseMsg(bt.nexToken()));
 				} catch (Exception e) {
 				}
 			}
