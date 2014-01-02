@@ -454,6 +454,9 @@ public class Sender {
 
 	/**
 	 * Tell the client that the server has finished to executed the command
+	 * 
+	 * @param rows
+	 *            the number of rows that are affected by the command
 	 */
 	public void sendCommandCompleteMessage(int rows) {
 		try {
