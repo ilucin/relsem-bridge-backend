@@ -43,7 +43,7 @@ public class ConnectionHandler implements Runnable {
 			String password = this.receiver_.getPassword();
 			// System.out.println("Password: " + password);
 
-			if (password != null && !password.equals(this.pass_)) {
+			if (password == null || !password.equals(this.pass_)) {
 				this.sender_.sendErrorResponse("Wrong Password!");
 				this.sender_.flush();
 				return;
