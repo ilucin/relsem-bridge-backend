@@ -39,7 +39,8 @@ public class ConnectionHandler implements Runnable {
 			this.sender_
 					.sendAuthenticationOkMessage(Sender.AuthEnum.ClearTextPasswordRequired);
 			this.sender_.flush();
-
+			
+			this.receiver_.getMessageType();
 			String password = this.receiver_.getPassword();
 			// System.out.println("Password: " + password);
 
