@@ -56,7 +56,6 @@ public class Receiver {
 	 */
 	public String getPassword() {
 		try {
-			this.dataInputStream_.readByte();
 			int msgLength = dataInputStream_.readInt();
 			// - 4 for message lenght
 			byte[] buf = new byte[msgLength - 4];
