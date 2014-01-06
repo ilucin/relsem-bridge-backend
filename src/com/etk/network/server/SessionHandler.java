@@ -42,11 +42,20 @@ class SessionHandler implements Runnable {
 		try {
 			char type = this.receiver_.getMessageType();
 			System.out.println(type);
-			
-			if (type == 'Q' || type == 'P'){
+
+			if (type == 'Q' || type == 'P') {
 
 				String query = this.receiver_.readQueryMessage();
 				System.out.println(query);
+
+				InputStream is = new ByteArrayInputStream(
+						query.getBytes("UTF-8"));
+
+				SelectQueryToObject selectQueryToObject = new SelectQueryToObject(
+						is);
+				SelectObject selectObject = selectQueryToObject
+						.getSelectObject();
+
 				// InputStream is = new
 				// ByteArrayInputStream(query.getBytes("UTF-8"));
 				// SelectQueryToObject transform = new SelectQueryToObject(is);
@@ -80,7 +89,7 @@ class SessionHandler implements Runnable {
 				// SelectObject selectObject =
 				// selectQueryToObject.getSelectObject();
 
-				SelectObject selectObject = new MockSelectObject();
+				// SelectObject selectObject = new MockSelectObject();
 
 				User user = new User("marko");
 				Schema schema = new MockedSchema(user);
