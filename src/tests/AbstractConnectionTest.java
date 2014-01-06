@@ -25,7 +25,6 @@ import org.junit.Test;
  */
 public class AbstractConnectionTest {
 
-	private static final int port = 5000;
 	private static Socket socket;
 	private static ServerSocket serverSocket;
 	protected static DataOutputStream dataOutputStream;
@@ -33,12 +32,11 @@ public class AbstractConnectionTest {
 
 	@BeforeClass
 	public static void setUpAbstractBeforeClass() throws Exception {
-		serverSocket = new ServerSocket(port);
-		socket = new Socket("localhost", port);
-
+		serverSocket = new ServerSocket(0);		
+		socket = new Socket("localhost", serverSocket.getLocalPort());
 		Socket acceptedSocket = serverSocket.accept();
-		dataOutputStream = new DataOutputStream(
-				acceptedSocket.getOutputStream());
+		
+		dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		dataInputStream = new DataInputStream(acceptedSocket.getInputStream());
 	}
 
