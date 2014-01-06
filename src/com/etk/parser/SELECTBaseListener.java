@@ -1,4 +1,4 @@
-package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
+package com.etk.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -426,19 +426,6 @@ public class SELECTBaseListener implements SELECTListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitQualifiedJoin(@NotNull SELECTParser.QualifiedJoinContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitColumnName(@NotNull SELECTParser.ColumnNameContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
