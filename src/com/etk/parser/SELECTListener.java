@@ -1,4 +1,5 @@
-package com.etk.parser;// Generated from C:\Users\Georgy\IdeaProjects\SELECTParser\src\SELECT.g4 by ANTLR 4.1
+package com.etk.parser;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -129,15 +130,15 @@ public interface SELECTListener extends ParseTreeListener {
 	void exitUnionJoin(@NotNull SELECTParser.UnionJoinContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
+	 * Enter a parse tree produced by {@link SELECTParser#booleanPrimary}.
 	 * @param ctx the parse tree
 	 */
-	void enterTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
+	void enterBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SELECTParser#tablePrimaryAs}.
+	 * Exit a parse tree produced by {@link SELECTParser#booleanPrimary}.
 	 * @param ctx the parse tree
 	 */
-	void exitTablePrimaryAs(@NotNull SELECTParser.TablePrimaryAsContext ctx);
+	void exitBooleanPrimary(@NotNull SELECTParser.BooleanPrimaryContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link SELECTParser#derivedColumnList}.
