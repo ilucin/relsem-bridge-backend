@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Time: 21:17
  * To change this template use File | Settings | File Templates.
  */
-public class SelectObject implements ParserInterface {
+public class SelectObject {
     private ArrayList<String> noPrefColNames;
     private ArrayList<ProjectionCell> prefColNames;
     private ArrayList<String> tableNames;
@@ -18,7 +18,7 @@ public class SelectObject implements ParserInterface {
 
     }
 
-    public void addFreeColumnName(String noPrefColName){
+    public void addNoPrefColName(String noPrefColName){
         if(noPrefColNames == null){
             noPrefColNames = new ArrayList<String>();
         }
