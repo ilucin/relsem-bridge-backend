@@ -22,10 +22,10 @@ public class ByteTokenizerTest {
 	@Before
 	public void setUp() throws Exception {
 		this.parser = new MsgParser();
-		this.delims = '\0';
-		this.bytes = new byte[] { '\0', '\0', 'I', ',', '\0', 'l', 'i', 'k',
-				'e', '\0', 't', 'o', '\0', '\0', 't', 'o', 'k', 'e', 'n', 'i',
-				'z', 'e', '!', '\0', ':', ')', '\0', '\0' };
+		this.delims = 0;
+		this.bytes = new byte[] { 0, 0, 'I', ',', 0, 'l', 'i', 'k', 'e', 0,
+				't', 'o', 0, 0, 't', 'o', 'k', 'e', 'n', 'i', 'z', 'e', '!', 0,
+				':', ')', 0, 0 };
 		this.tokenizer = new ByteTokenizer(bytes, delims);
 	}
 
