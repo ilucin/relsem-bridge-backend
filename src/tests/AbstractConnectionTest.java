@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -33,7 +34,7 @@ public class AbstractConnectionTest {
 
 	@BeforeClass
 	public static void setUpAbstractBeforeClass() throws Exception {
-		serverSocket = new ServerSocket(0);		
+		serverSocket = new ServerSocket(0);
 		socket = new Socket("localhost", serverSocket.getLocalPort());
 		Socket acceptedSocket = serverSocket.accept();
 		
@@ -58,7 +59,7 @@ public class AbstractConnectionTest {
 	}
 
 	@Test
-	public void testConnectionEstablishment() {
+	public void connectionEstablishmentTest() {
 		assertNotNull(dataInputStream);
 		assertNotNull(dataOutputStream);
 		assertEquals(socket.isClosed(), false);
