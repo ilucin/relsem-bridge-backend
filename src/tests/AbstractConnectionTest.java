@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -50,9 +51,6 @@ public class AbstractConnectionTest {
 
 	@Before
 	public void setUp() throws Exception {
-		
-		
-		
 	}
 
 	@After
@@ -60,11 +58,46 @@ public class AbstractConnectionTest {
 	}
 
 	@Test
-	public void testNotNull() {
+	public void testConnectionEstablishment() {
 		assertNotNull(dataInputStream);
 		assertNotNull(dataOutputStream);
 		assertEquals(socket.isClosed(), false);
-		assertEquals(socket.isConnected(), true);
 		assertEquals(serverSocket.isClosed(), false);
+		
+		final byte byteToRead = 2;
+		final boolean booleanToRead = true;
+		final int intToRead = 10;
+		final short shortToRead = 3;
+		final long longToRead = 50;
+		try {
+			dataOutputStream.writeByte(byteToRead);
+			dataOutputStream.flush();
+			assertEquals(dataInputStream.readByte(), byteToRead);
+			
+			dataOutputStream.writeBoolean(booleanToRead);
+			dataOutputStream.flush();
+			assertEquals(dataInputStream.readBoolean(), booleanToRead);
+			
+			dataOutputStream.writeInt(intToRead);
+			dataOutputStream.flush();
+			assertEquals(dataInputStream.readInt(), intToRead);
+			
+			
+			dataOutputStream.writeShort(shortToRead);
+			dataOutputStream.flush();
+			assertEquals(dataInputStream.readShort(), shortToRead);
+			
+			dataOutputStream.writeLong(longToRead);
+			dataOutputStream.flush();
+			assertEquals(dataInputStream.readLong(), longToRead);
+			
+			socket.close();
+			serverSocket.close();
+			assertEquals(socket.isClosed(), true);
+			assertEquals(serverSocket.isClosed(), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 }
