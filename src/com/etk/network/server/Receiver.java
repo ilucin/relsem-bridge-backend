@@ -151,7 +151,7 @@ public class Receiver {
 			// - 4 for the message lenght
 			byte[] buf = new byte[msgLength - 4];
 			if (this.dataInputStream_.read(buf) > 0) {
-				byte delim = '\0';
+				byte delim = 0;
 				ByteTokenizer bt = new ByteTokenizer(buf, delim);
 				try {
 					String returnValue = this.parser_.parseMsg(bt.nexToken());
@@ -184,7 +184,7 @@ public class Receiver {
 			// - 4 for the message lenght
 			byte[] buf = new byte[msgLength - 4];
 			if (this.dataInputStream_.read(buf) > 0) {
-				byte delim = '\0';
+				byte delim = 0;
 				ByteTokenizer bt = new ByteTokenizer(buf, delim);
 				try {
 					String returnValue = this.parser_.parseMsg(bt.nexToken());
