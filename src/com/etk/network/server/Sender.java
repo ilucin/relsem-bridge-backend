@@ -267,7 +267,7 @@ public class Sender {
 		for (int i = 0; i < in.length; i++) {
 			out[i] = in[i];
 		}
-		out[in.length] = '\0';
+		out[in.length] = 0;
 		return out;
 	}
 
