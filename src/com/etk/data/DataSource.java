@@ -2,10 +2,6 @@ package com.etk.data;
 
 import com.etk.data.query.Expression;
 import com.etk.data.query.Properties;
-import com.etk.manager.schema.Attribute;
-import com.etk.manager.schema.Type;
-import com.etk.manager.schema.mappings.AttributeMapping;
-import com.etk.manager.schema.mappings.EntityMapping;
 
 import java.util.List;
 
