@@ -11,8 +11,29 @@ import java.nio.ByteBuffer;
  * 
  */
 public class MsgParser {
-	
+
+	private String charsetName_;
+
+	/**
+	 * The "UTF-8" charset will be used.
+	 */
 	public MsgParser() {
+		this.charsetName_ = "UTF-8";
+	}
+
+	/**
+	 * Specify the charset to parse messages. The "UTF-8" will be used if the
+	 * input is null or an empty string
+	 * 
+	 * @param charsetName
+	 *            thecharset to use
+	 */
+	public MsgParser(String charsetName) {
+		// TODO check charsetName validity
+		if (charsetName != null && !charsetName.isEmpty())
+			this.charsetName_ = charsetName;
+		else
+			this.charsetName_ = "UTF-8";
 	}
 
 	/**
@@ -65,7 +86,7 @@ public class MsgParser {
 	 *             iff the named charset is not supported
 	 */
 	public String parseMsg(byte[] bytes) throws UnsupportedEncodingException {
-		String msgString = new String(bytes, "UTF-8");
+		String msgString = new String(bytes, this.charsetName_);
 		return msgString;
 	}
 
