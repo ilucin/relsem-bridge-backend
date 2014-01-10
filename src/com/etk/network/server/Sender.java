@@ -9,8 +9,6 @@ import java.util.List;
 import com.etk.db.query.QueryResult;
 import com.etk.manager.schema.Type;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Helper class to send well defined messages
  * 
@@ -505,14 +503,14 @@ public class Sender {
 			// the value itself
 			for (int i = 0; i < values.length; i++) {
 				this.dataOutputStream_.writeInt(lenColList.get(i));
-				this.dataOutputStream_.writeBytes(values[i]);
+				this.dataOutputStream_.write(bvalList.get(i));
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendDataRow: ");
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Send a message to the client transmitting one datarow
 	 * 
@@ -551,9 +549,7 @@ public class Sender {
 				// the value itself
 				for (int j = 0; j < row.getData().get(i).length; j++) {
 					this.dataOutputStream_.writeInt(lenColList.get(j));
-
-					this.dataOutputStream_.writeBytes(new String(
-							nullTerminateString(row.getData().get(i)[j])));
+					this.dataOutputStream_.write(bvalList.get(i));
 				}
 			}
 		} catch (IOException e) {
@@ -606,7 +602,7 @@ public class Sender {
 				 * salt = new byte[4]; r.nextBytes(salt); // String encodedSalt
 				 * = Base64.encodeBase64String(salt);
 				 */
-				throw new NotImplementedException();
+				throw new IllegalStateException();
 			}
 		} catch (IOException e) {
 			System.out.println("Error in sendAuthenticationOkMessage: ");
